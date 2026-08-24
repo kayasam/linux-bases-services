@@ -17,6 +17,7 @@ description: Formation pratique d'administration Linux et de mise en œuvre de s
     <div class="network-stats" aria-label="Contenu de la formation">
       <span><strong>15</strong> cours</span>
       <span><strong>10</strong> TP</span>
+      <span><strong>7</strong> quiz</span>
       <span><strong>16</strong> schémas SVG</span>
     </div>
   </div>

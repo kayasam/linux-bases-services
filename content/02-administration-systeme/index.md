@@ -25,3 +25,6 @@ description: Observer le fonctionnement interne d'un serveur Linux et le diagnos
 > - [Journalisation](02-administration-systeme/tp/06-journalisation)
 > - [Performances](02-administration-systeme/tp/07-performances)
 > - [Tâches planifiées](02-administration-systeme/tp/08-taches-planifiees)
+
+> [!SUCCESS] Évaluation du chapitre
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/quiz.html" target="_blank">Faire le quiz interactif — 20 questions</a>

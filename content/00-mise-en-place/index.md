@@ -13,6 +13,7 @@ description: Préparer l'infrastructure Linux et comprendre le fil rouge de la f
 > [!TIP] Ressources du chapitre
 >
 > - [Ouvrir le cours](00-mise-en-place/cours)
+> - <a href="https://kayasam.github.io/linux-bases-services/00-mise-en-place/quiz.html" target="_blank">Faire le quiz — 20 questions</a>
 > - [Consulter le guide formateur](Ressources/guide-formateur)
 > - [Utiliser la fiche de diagnostic](Ressources/fiche-diagnostic-tssr)
 

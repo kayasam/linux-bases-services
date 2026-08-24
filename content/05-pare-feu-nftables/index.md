@@ -11,6 +11,7 @@ description: Construire, tester et rendre persistant un filtrage réseau Linux.
 >
 > - [Ouvrir le cours](05-pare-feu-nftables/cours)
 > - [Réaliser le TP nftables](05-pare-feu-nftables/tp/05-nftables)
+> - <a href="https://kayasam.github.io/linux-bases-services/05-pare-feu-nftables/quiz.html" target="_blank">Faire le quiz — 20 questions</a>
 > - [Ouvrir la fiche de diagnostic](Ressources/fiche-diagnostic-tssr)
 
 Le chapitre insiste sur le chemin réel du paquet, l'ordre des règles, le suivi de connexion et les compteurs permettant de prouver qu'une règle est utilisée.

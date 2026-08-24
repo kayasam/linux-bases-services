@@ -11,6 +11,7 @@ description: Comprendre et mettre en œuvre une chaîne Postfix, Maildir et Dove
 >
 > - [Ouvrir le cours](06-messagerie/cours)
 > - [Réaliser le TP messagerie](06-messagerie/tp/06-messagerie)
+> - <a href="https://kayasam.github.io/linux-bases-services/06-messagerie/quiz.html" target="_blank">Faire le quiz — 20 questions</a>
 > - [Ouvrir la fiche de diagnostic](Ressources/fiche-diagnostic-tssr)
 
 Le suivi d'un identifiant de file permet de relier la réception SMTP, la remise dans Maildir et la consultation IMAP. RainLoop est conservé uniquement comme composant historique de laboratoire.

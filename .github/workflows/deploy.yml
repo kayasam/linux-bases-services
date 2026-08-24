@@ -58,6 +58,16 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
+      - name: Publish interactive HTML quizzes
+        run: |
+          find content -type f -name "*.html" -print0 | while IFS= read -r -d '' file; do
+            relative_path="${file#content/}"
+            mkdir -p "public/$(dirname "$relative_path")"
+            cp "$file" "public/$relative_path"
+          done
+          mkdir -p public/Ressources/html-assets
+          cp -R content/Ressources/html-assets/. public/Ressources/html-assets/
+
       - name: Publish Markdown downloads
         run: |
           mkdir -p public/telechargements
