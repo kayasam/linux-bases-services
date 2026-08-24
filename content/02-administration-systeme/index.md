@@ -18,6 +18,9 @@ description: Observer le fonctionnement interne d'un serveur Linux et le diagnos
 > - [Observation des performances](02-administration-systeme/07-performances)
 > - [Tâches planifiées](02-administration-systeme/08-taches-planifiees)
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes des huit sous-chapitres et composer leurs options</a>
+
 > [!TIP] Travaux pratiques
 >
 > - [Processus](02-administration-systeme/tp/04-processus)

@@ -1,5 +1,8 @@
 # 1.1 Partitionnement natif et LVM
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/01-stockage/commandes.html" target="_blank">Explorer les commandes de partitionnement et LVM</a>
+
 **Objectifs** : savoir identifier les unités de stockage d'une machine, comprendre les limites du partitionnement classique, et découvrir LVM comme réponse à ces limites.
 
 ![Chaîne de stockage LVM](Ressources/images/chaine-stockage-lvm.svg)

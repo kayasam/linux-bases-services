@@ -1,5 +1,8 @@
 # 1.2 Systèmes de fichiers
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/01-stockage/commandes.html" target="_blank">Explorer les commandes de systèmes de fichiers et de montage</a>
+
 **Objectifs** : choisir un système de fichiers adapté à un usage, savoir le créer, le monter (temporairement et de façon persistante), et le redimensionner.
 
 ![Montage temporaire et persistant](Ressources/images/montage-fstab.svg)

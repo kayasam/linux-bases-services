@@ -1,5 +1,8 @@
 # 2.6 Journalisation et logs (dont logs noyau)
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes de journalisation et leurs filtres</a>
+
 **Objectifs** : savoir où chercher quand quelque chose ne va pas — journal centralisé systemd, messages noyau, fichiers texte classiques — et filtrer efficacement chaque source.
 
 ![Méthode de diagnostic TSSR](Ressources/images/diagnostic-tssr.svg)

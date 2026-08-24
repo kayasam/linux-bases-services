@@ -1,5 +1,8 @@
 # 2.1 Démarrage du système : du boot à la connexion
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes de démarrage et de diagnostic</a>
+
 **Objectifs** : situer les grandes étapes entre l'allumage de la machine et l'invite de connexion, et comprendre le rôle de l'initramfs.
 
 ![Séquence de démarrage Linux](Ressources/images/sequence-demarrage.svg)

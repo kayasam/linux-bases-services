@@ -1,5 +1,8 @@
 # 3. Service DNS (BIND9)
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/03-dns-bind9/commandes.html" target="_blank">Explorer les commandes DNS, leurs options et leurs preuves</a>
+
 **Objectifs** : installer un serveur DNS BIND9, comprendre le rôle d'un forwarder et d'une zone, créer/modifier des enregistrements, et diagnostiquer une résolution qui échoue.
 
 ![Résolution DNS locale et transfert](Ressources/images/resolution-dns.svg)

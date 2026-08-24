@@ -1,5 +1,8 @@
 # 6. Service mail : Postfix (SMTP) + Dovecot (IMAP)
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/06-messagerie/commandes.html" target="_blank">Explorer les commandes Postfix et Dovecot</a>
+
 **Objectifs** : mettre en place un serveur mail local complet — envoi avec Postfix et consultation avec Dovecot — pour des boîtes mail d'utilisateurs Linux locaux. Un client graphique maintenu peut être ajouté en extension.
 
 ![Chaîne de traitement d'un courrier](Ressources/images/chaine-mail.svg)

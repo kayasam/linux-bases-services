@@ -1,5 +1,8 @@
 # 2.4 Gestion des processus
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes de processus, signaux et priorités</a>
+
 **Objectifs** : lister, filtrer et lire l'état des processus, leur envoyer des signaux, ajuster leur priorité, et gérer leur exécution en premier/arrière-plan.
 
 ![Relation entre unité systemd et processus](Ressources/images/processus-systemd.svg)

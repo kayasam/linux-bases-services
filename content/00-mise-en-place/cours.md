@@ -1,5 +1,8 @@
 # Linux Administration : Bases + Services - s35 2026
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/00-mise-en-place/commandes.html" target="_blank">Comprendre les commandes du laboratoire et composer leurs options</a>
+
 > [name=Samuel GUILLARD <sguillard@dawan.fr>] basé sur les formations de Hughes BIGO, Bruno GUÉRIN, Bastien TRAVERSE, Antoine RAULT
 > [time=24 aout 2026]
 

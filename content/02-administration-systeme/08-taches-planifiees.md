@@ -1,5 +1,8 @@
 # 2.8 Tâches planifiées
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes cron, at et timers systemd</a>
+
 **Objectifs** : choisir entre cron (récurrent), at (une seule fois) et les timers systemd, et savoir écrire une expression cron sans erreur.
 
 > [!NOTE] Compétence TSSR

@@ -1,5 +1,8 @@
 # 2.3 Modules noyau et pilotes
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes des modules et du noyau</a>
+
 **Objectifs** : comprendre pourquoi le noyau Linux est modulaire, et savoir charger/décharger/paramétrer un module sans redémarrer.
 
 > [!NOTE] Vocabulaire

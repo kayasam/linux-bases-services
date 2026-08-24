@@ -1,5 +1,8 @@
 # 2.5 Gestion des services (systemd)
 
+> [!TIP] Commandes interactives
+> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes systemd et leurs options</a>
+
 **Objectifs** : comprendre ce qu'est une unité systemd, savoir démarrer/activer/diagnostiquer un service, et situer les services dans le processus de démarrage vu en 2.1.
 
 ![Relation entre unité systemd et processus](Ressources/images/processus-systemd.svg)
