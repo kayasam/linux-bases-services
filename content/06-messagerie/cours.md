@@ -1,6 +1,6 @@
-# 6. Service mail : Postfix (SMTP) + Dovecot (IMAP) + Rainloop (webmail)
+# 6. Service mail : Postfix (SMTP) + Dovecot (IMAP)
 
-**Objectifs** : mettre en place un serveur mail local complet — envoi (Postfix), consultation (Dovecot), interface web (Rainloop) — pour des boîtes mail d'utilisateurs Linux locaux.
+**Objectifs** : mettre en place un serveur mail local complet — envoi avec Postfix et consultation avec Dovecot — pour des boîtes mail d'utilisateurs Linux locaux. Un client graphique maintenu peut être ajouté en extension.
 
 ![Chaîne de traitement d'un courrier](Ressources/images/chaine-mail.svg)
 
@@ -13,12 +13,12 @@
 
 - **Postfix** (MTA) : reçoit et envoie les mails (protocole SMTP)
 - **Dovecot** (MDA/serveur IMAP) : donne accès aux boîtes mail stockées localement
-- **Rainloop** (webmail) : interface web qui parle IMAP/SMTP en coulisses, comme n'importe quel client mail
+- **Client mail** : interface graphique ou Web qui parle IMAP/SMTP, sans participer lui-même au transport ni au stockage
 
 > [!WARNING] RainLoop est désormais un composant historique
-> Le dépôt officiel RainLoop a été archivé en novembre 2024 et sa dernière version publiée date de 2022. On peut le conserver pour reproduire ce laboratoire isolé, mais pas le recommander pour une nouvelle mise en production. Préférer un webmail maintenu ; SnappyMail est notamment issu de RainLoop. Le cœur pédagogique de ce chapitre reste Postfix + Dovecot, indépendant de l'interface web.
+> Le dépôt officiel RainLoop a été archivé en novembre 2024. Son installation a donc été retirée du parcours vérifié. Le cœur pédagogique reste Postfix + Dovecot, indépendant de l'interface utilisée.
 
-Moyen mnémotechnique : Postfix **poste** le courrier, Dovecot le **range dans le pigeonnier** (boîte mail), Rainloop est **le guichet** par lequel on vient le consulter.
+Moyen mnémotechnique : Postfix **poste** le courrier, Dovecot ouvre le **pigeonnier** (boîte mail), et le client est **le guichet** utilisé pour le consulter.
 
 ---
 
@@ -83,6 +83,18 @@ Dans `/etc/dovecot/conf.d/10-auth.conf` (⚠️ authentification en clair, accep
 ```text
 disable_plaintext_auth = no
 ```
+
+> [!IMPORTANT] Compatibilité Dovecot 2.4 — Debian 13
+> `mail_location` et `disable_plaintext_auth` correspondent à Dovecot 2.3, fourni notamment par Debian 12. Avec Dovecot 2.4, utiliser plutôt :
+>
+> ```text
+> mail_driver = maildir
+> mail_path = ~/Maildir
+> mail_inbox_path = ~/Maildir
+> auth_allow_cleartext = yes
+> ```
+>
+> Vérifier la version avec `dovecot --version` et la configuration calculée avec `doveconf -n`. L'authentification en clair reste strictement réservée au laboratoire privé.
 
 ```bash
 sudo systemctl restart dovecot
@@ -156,34 +168,28 @@ sudo journalctl -u postfix -u dovecot --since "5 minutes ago"
 
 ---
 
-### Installer Rainloop (webmail)
+### Ajouter éventuellement un client mail
 
-Rainloop nécessite un serveur web + PHP (chapitre 4) :
+RainLoop n'est plus installé dans le parcours : son dépôt officiel est archivé et l'ancienne archive de téléchargement ne constitue plus une base fiable. Pour une démonstration graphique, utiliser Thunderbird ou un webmail actuellement maintenu dans le réseau privé.
+
+Paramètres du laboratoire :
+
+- IMAP : serveur `mail.dawan-s35.local`, port 143, sans TLS uniquement dans le réseau isolé ;
+- SMTP : serveur `mail.dawan-s35.local`, port 25 pour le test local ;
+- utilisateur : compte Linux local, par exemple `alice` ou `bob`.
+
+Avant le client graphique, prouver le fonctionnement côté serveur :
 
 ```bash
-cd /var/www/html
-sudo mkdir rainloop && cd rainloop
-sudo apt install -y unzip
-sudo curl -sL https://www.rainloop.net/repository/webmail/rainloop-latest.zip -o rainloop.zip
-sudo unzip rainloop.zip -d .
-sudo rm rainloop.zip
-sudo chown -R www-data:www-data /var/www/html/rainloop
+sudo postfix check
+sudo doveconf -n
+sudo doveadm search -u bob mailbox INBOX ALL
+ss -lntp | grep -E ':(25|143)\b'
 ```
-
-Cette procédure est conservée uniquement pour compatibilité avec le TP historique. Vérifier l'archive téléchargée et ne jamais exposer cette installation à Internet. Protéger impérativement le répertoire `data` contre tout accès HTTP et changer les identifiants administrateur dès la première connexion.
-
-Accéder à l'interface :
-
-- Admin : `http://192.168.56.200/rainloop/?admin` (identifiants par défaut `admin` / `12345`, à changer immédiatement)
-- Dans l'admin, section **Domaines** : créer un domaine `dawan-s35.local` avec IMAP = `localhost:143` (sans SSL) et SMTP = `localhost:25`
-- Webmail utilisateur : `http://192.168.56.200/rainloop/` — se connecter avec `alice`/mot de passe Linux d'alice
-
-> [!NOTE]
-> Comme la connexion se fait en clair (labo pédagogique), pensez bien à `disable_plaintext_auth = no` côté Dovecot, sinon Rainloop ne pourra pas s'authentifier en IMAP.
 
 > [!NOTE]
 > **À retenir**
 >
-> - Postfix (SMTP) envoie/reçoit, Dovecot (IMAP) donne accès à la boîte déjà reçue, Rainloop n'est qu'une interface par-dessus les deux.
+> - Postfix (SMTP) envoie/reçoit, Dovecot (IMAP) donne accès à la boîte déjà reçue ; le client n'est qu'une interface par-dessus les deux.
 > - `home_mailbox = Maildir/` est ce qui relie Postfix et Dovecot : les deux doivent s'accorder sur le même format de stockage.
 > - En labo, l'authentification en clair est acceptable ; en production, elle imposerait TLS (port 587/993) — hors périmètre de ce chapitre.

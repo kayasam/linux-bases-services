@@ -14,4 +14,8 @@ description: Méthodes et documents transversaux de la formation Linux.
     <span class="experience-card__icon" aria-hidden="true">◎</span><span class="experience-card__eyebrow">Animation</span>
     <strong>Guide formateur</strong><span>Fil rouge, compétences attendues et rituel pédagogique.</span><b>Ouvrir →</b>
   </a>
+  <a class="experience-card experience-card--revision" href="Ressources/validation-des-tp">
+    <span class="experience-card__icon" aria-hidden="true">✓</span><span class="experience-card__eyebrow">Recette technique</span>
+    <strong>Validation des TP</strong><span>Environnement testé, scénarios exécutés et écarts corrigés.</span><b>Consulter →</b>
+  </a>
 </div>

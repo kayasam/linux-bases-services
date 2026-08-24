@@ -4,26 +4,33 @@
 >
 > - <a href="https://kayasam.github.io/linux-bases-services/telechargements/05-pare-feu-nftables/tp/05-nftables.md" download>Télécharger ce TP en Markdown</a>
 
-> Chapitre associé : `Cours.md`
+> Chapitre associé : [pare-feu nftables](05-pare-feu-nftables/cours)
 >
 > Durée estimée : 1 h 30 — console locale et seconde session SSH obligatoires
+
+> [!SUCCESS] Procédure vérifiée
+> Le filtrage a été testé depuis un client placé sur un réseau distinct : SSH, DNS et HTTP passent, un service temporaire sur 8080 est bloqué, et les compteurs des règles correspondantes évoluent.
 
 _**Consigne**_ :
 
 1. Installer `nftables` et l'activer au démarrage
-2. Écrire un jeu de règles dans `/etc/nftables.conf` qui, par défaut, bloque tout le trafic entrant
-3. Autoriser explicitement : le trafic déjà établi, la boucle locale (lo), ICMP/ICMPv6, le SSH, le DNS et le HTTP ; ajouter des compteurs et commentaires aux règles de service
-4. Charger ce jeu de règles et vérifier qu'il est bien actif
-5. Depuis votre hôte, vérifier que le SSH fonctionne toujours, mais qu'un port non autorisé (ex : 8080) est bien bloqué
+2. Sauvegarder l'état actif avec `sudo nft list ruleset > /tmp/ruleset-avant.nft`, puis écrire dans `/etc/nftables.conf` une table `inet` dont la chaîne `input` possède une politique `drop`
+3. Avant le refus final, autoriser explicitement : `ct state established,related`, la boucle locale, ICMP/ICMPv6, SSH, DNS en UDP **et TCP**, puis HTTP ; ajouter des compteurs et commentaires
+4. Valider sans appliquer avec `sudo nft --check --file /etc/nftables.conf`, conserver une console de secours, charger avec `sudo nft -f /etc/nftables.conf`, puis vérifier avec `sudo nft -a list ruleset`
+5. Depuis l'hôte, vérifier que SSH, DNS et HTTP fonctionnent toujours. Pour prouver le filtrage de 8080, démarrer d'abord un service temporaire sur ce port et confirmer qu'il répond localement, puis que le client distant est bloqué
     <details>
     <summary>Clique ici pour un indice</summary>
-    `nc -zv IP PORT` ou `telnet IP PORT` depuis l'hôte permet de tester si un port répond.
+    Un échec sur un port où aucun programme n'écoute ne prouve pas l'action du pare-feu. Utiliser temporairement `python3 -m http.server 8080 --bind 0.0.0.0`, tester localement, puis `nc -zvw2 IP 8080` depuis le client. Conserver le PID du serveur et l'arrêter après le test.
     </details>
-6. Ajouter une règle autorisant le port 443 (HTTPS), sans recharger tout le fichier
+6. Ajouter à chaud une règle autorisant le port 443, sans recharger tout le fichier. Si une règle terminale `drop` existe, insérer l'autorisation **avant** celle-ci (`insert rule` ou `add rule ... position HANDLE`) plutôt que de l'ajouter après
 7. Lister les règles avec leur "handle", puis supprimer la règle ajoutée à l'étape 6 via son handle
 8. Relancer le service `nftables` et vérifier que la configuration présente dans `/etc/nftables.conf` est bien rechargée automatiquement
 
-> [!NOTE] Correction formateur`n> La correction détaillée est conservée dans le coffre pédagogique.
+> [!WARNING] Ordre des règles
+> Une autorisation placée après un verdict terminal `drop` est inatteignable. Après chaque ajout, afficher la chaîne avec ses handles, déclencher un flux réel et vérifier que le compteur de la nouvelle règle augmente.
+
+> [!NOTE] Correction formateur
+> La correction détaillée est conservée dans le coffre pédagogique.
 
 ### Défi de diagnostic
 
