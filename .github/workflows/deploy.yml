@@ -23,6 +23,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -87,7 +90,7 @@ jobs:
           echo "Archive vérifiée : $markdown_count Markdown et $svg_count SVG."
 
       - name: Upload website
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: public
 
