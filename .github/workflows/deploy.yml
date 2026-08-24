@@ -1,0 +1,103 @@
+name: Deploy Linux course to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v5
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache Quartz plugins
+        uses: actions/cache@v5
+        with:
+          path: .quartz/plugins
+          key: ${{ runner.os }}-plugins-${{ hashFiles('quartz.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-plugins-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Quartz plugins
+        run: npx quartz plugin install
+
+      - name: Fix folder-page links in the local graph
+        run: node scripts/fix-quartz-graph.mjs
+
+      - name: Build Quartz
+        run: npx quartz build
+
+      - name: Publish Markdown downloads
+        run: |
+          mkdir -p public/telechargements
+          find content -type f -name "*.md" -print0 | while IFS= read -r -d '' file; do
+            relative_path="${file#content/}"
+            mkdir -p "public/telechargements/$(dirname "$relative_path")"
+            cp "$file" "public/telechargements/$relative_path"
+          done
+
+      - name: Create Obsidian archive
+        run: |
+          mkdir -p download/Linux-Bases-Services
+          cp -R content/. download/Linux-Bases-Services/
+          cd download
+          archive="../public/linux-bases-services-obsidian.zip"
+          zip -qr "$archive" Linux-Bases-Services
+
+          markdown_count="$(unzip -Z1 "$archive" | grep -cE '\.md$' || true)"
+          svg_count="$(unzip -Z1 "$archive" | grep -cE '\.svg$' || true)"
+          quartz_count="$(unzip -Z1 "$archive" | grep -cE '(^|/)(public|quartz|\.quartz)/' || true)"
+
+          if [ "$markdown_count" -eq 0 ] || [ "$svg_count" -eq 0 ]; then
+            echo "Archive incomplète : Markdown=$markdown_count, SVG=$svg_count"
+            exit 1
+          fi
+          if [ "$quartz_count" -gt 0 ]; then
+            echo "L'archive contient des fichiers techniques Quartz."
+            exit 1
+          fi
+          echo "Archive vérifiée : $markdown_count Markdown et $svg_count SVG."
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4

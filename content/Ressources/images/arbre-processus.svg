@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 500" role="img" aria-labelledby="title desc">
+  <title id="title">Arbre de parenté des processus Linux</title><desc id="desc">Systemd PID 1 crée des services ; sshd crée une session, puis bash lance une commande ps.</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#334155"/></marker><style>.h{font:700 21px system-ui,sans-serif;fill:#0f172a}.t{font:600 17px system-ui,sans-serif;fill:#0f172a}.s{font:14px system-ui,sans-serif;fill:#475569}.flow{stroke:#334155;stroke-width:2.3;fill:none;marker-end:url(#arrow)}</style></defs>
+  <rect width="1120" height="500" rx="20" fill="#f8fafc"/><text x="560" y="38" text-anchor="middle" class="h">Parent, enfant, PID et PPID</text>
+  <rect x="450" y="65" width="220" height="80" rx="14" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/><text x="560" y="98" text-anchor="middle" class="t">systemd</text><text x="560" y="124" text-anchor="middle" class="s">PID 1 · PPID 0</text>
+  <rect x="235" y="205" width="220" height="80" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="345" y="238" text-anchor="middle" class="t">cron</text><text x="345" y="264" text-anchor="middle" class="s">PID 700 · PPID 1</text>
+  <rect x="665" y="205" width="220" height="80" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="775" y="238" text-anchor="middle" class="t">sshd</text><text x="775" y="264" text-anchor="middle" class="s">PID 850 · PPID 1</text>
+  <rect x="665" y="345" width="220" height="80" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="775" y="378" text-anchor="middle" class="t">bash — session SSH</text><text x="775" y="404" text-anchor="middle" class="s">PID 1991 · PPID 850</text>
+  <rect x="925" y="345" width="155" height="80" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="1002" y="378" text-anchor="middle" class="t">ps</text><text x="1002" y="404" text-anchor="middle" class="s">PPID 1991</text>
+  <path d="M510 145L375 205" class="flow"/><path d="M610 145L745 205" class="flow"/><path d="M775 285V345" class="flow"/><path d="M885 385H925" class="flow"/>
+  <text x="442" y="172" class="s">fork() + exec()</text><text x="670" y="172" class="s">fork() + exec()</text>
+  <rect x="55" y="340" width="480" height="95" rx="14" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/><text x="295" y="372" text-anchor="middle" class="t">Point de vigilance</text><text x="295" y="400" text-anchor="middle" class="s">Un signal envoyé au parent ne se propage pas</text><text x="295" y="423" text-anchor="middle" class="s">automatiquement à tous ses enfants.</text>
+  <text x="560" y="470" text-anchor="middle" class="s">Preuves : ps -o pid,ppid,stat,cmd --forest · pstree -ap · systemctl status PID</text>
+</svg>

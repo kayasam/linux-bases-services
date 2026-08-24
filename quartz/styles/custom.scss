@@ -1,0 +1,433 @@
+@use "./variables.scss" as *;
+@use "./network.scss";
+@use "./explorer-network.scss";
+
+@media all and ($desktop) {
+  .page > #quartz-body > .sidebar {
+    padding-top: 1rem;
+  }
+}
+
+body[data-slug="index"] .article-title,
+body[data-slug="index"] .content-meta,
+body[data-slug="index"] .note-properties,
+body[data-slug="index"] article .markdown-preview-view > h1:first-child,
+body[data-slug$="/index"] .note-properties,
+body[data-slug$="/index"] .content-meta,
+body[data-slug$="/index"] article .markdown-preview-view > h1:first-child {
+  display: none;
+}
+
+article a[href$="-interactif.html"],
+article a[href$="schema-osi-encapsulation.html"],
+article a[href$="index-protocoles-et-notions.html"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--secondary) 55%, transparent);
+  border-radius: 0.45rem;
+  color: #fff;
+  background-color: var(--secondary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+article a[href$="-interactif.html"]:hover,
+article a[href$="schema-osi-encapsulation.html"]:hover,
+article a[href$="index-protocoles-et-notions.html"]:hover {
+  color: #fff;
+  filter: brightness(1.15);
+}
+
+article p:has(> img[alt*="réseau informatique moderne"]) {
+  margin: 1.25rem 0 1.5rem;
+}
+
+article img[alt*="réseau informatique moderne"] {
+  display: block;
+  width: 100%;
+  max-height: 25rem;
+  object-fit: cover;
+  border: 1px solid color-mix(in srgb, #2775ff 35%, var(--lightgray));
+  border-radius: 1rem;
+  box-shadow: 0 0.75rem 2rem rgb(5 24 58 / 22%);
+}
+
+article a[href*="/telechargements/"][href$=".md"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid color-mix(in srgb, #0d9668 55%, transparent);
+  border-radius: 0.45rem;
+  color: #fff;
+  background-color: #0d9668;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+article a[href*="/telechargements/"][href$=".md"]:hover {
+  color: #fff;
+  filter: brightness(1.12);
+}
+
+/* Ressources de chapitre : une grille d’actions homogène et pédagogique. */
+body[data-slug^="00-introduction-reseaux/"] {
+  --chapter-action-accent: #1768ac;
+}
+
+body[data-slug^="01-couche-physique/"] {
+  --chapter-action-accent: #d7474c;
+}
+
+body[data-slug^="02-couche-liaison/"] {
+  --chapter-action-accent: #d77b16;
+}
+
+body[data-slug^="03-couche-reseau/"] {
+  --chapter-action-accent: #32875d;
+}
+
+body[data-slug^="04-couche-transport/"] {
+  --chapter-action-accent: #148da3;
+}
+
+body[data-slug^="05-services-reseau/"] {
+  --chapter-action-accent: #7158d9;
+}
+
+body[data-slug^="06-securite-et-acces/"] {
+  --chapter-action-accent: #b83c78;
+}
+
+body[data-slug^="00-mise-en-place/"] {
+  --chapter-action-accent: #1768ac;
+}
+
+body[data-slug^="01-stockage/"] {
+  --chapter-action-accent: #d77b16;
+}
+
+body[data-slug^="02-administration-systeme/"] {
+  --chapter-action-accent: #148da3;
+}
+
+body[data-slug^="03-dns-bind9/"] {
+  --chapter-action-accent: #7158d9;
+}
+
+body[data-slug^="04-serveur-web-lamp/"] {
+  --chapter-action-accent: #32875d;
+}
+
+body[data-slug^="05-pare-feu-nftables/"] {
+  --chapter-action-accent: #d7474c;
+}
+
+body[data-slug^="06-messagerie/"] {
+  --chapter-action-accent: #b83c78;
+}
+
+article img[src$=".svg"] {
+  display: block;
+  width: 100%;
+  margin: 1.25rem auto 1.5rem;
+  padding: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--secondary) 16%, var(--lightgray));
+  border-radius: 1rem;
+  background: #f8fafc;
+  box-shadow: 0 0.55rem 1.4rem rgb(13 38 67 / 8%);
+}
+
+article .callout:has(a.chapter-resource) {
+  --resource-action-accent: var(--chapter-action-accent, var(--secondary));
+  margin: 1.15rem 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--resource-action-accent) 24%, var(--lightgray));
+  border-radius: 1rem;
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      color-mix(in srgb, var(--resource-action-accent) 12%, transparent),
+      transparent 18rem
+    ),
+    color-mix(in srgb, var(--resource-action-accent) 4%, var(--light));
+  box-shadow: 0 0.55rem 1.4rem rgb(13 38 67 / 6%);
+}
+
+article .callout:has(a.chapter-resource) > .callout-title {
+  margin-bottom: 0.8rem;
+  color: var(--resource-action-accent);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.62rem;
+  margin: 0;
+  padding: 0;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li::marker {
+  content: "";
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li > a {
+  --action-accent: var(--resource-action-accent);
+  display: grid;
+  min-height: 3.75rem;
+  grid-template-columns: 2.15rem minmax(0, 1fr) auto;
+  gap: 0.62rem;
+  align-items: center;
+  padding: 0.62rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--action-accent) 18%, var(--lightgray));
+  border-radius: 0.78rem;
+  color: var(--dark);
+  background: color-mix(in srgb, var(--action-accent) 4%, var(--light));
+  box-shadow: 0 0.25rem 0.7rem rgb(13 38 67 / 4%);
+  font-size: 0.79rem;
+  font-weight: 720;
+  line-height: 1.25;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li > a::before {
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  place-items: center;
+  border-radius: 0.6rem;
+  color: var(--action-accent);
+  background: color-mix(in srgb, var(--action-accent) 12%, var(--light));
+  content: "↗";
+  font-family: var(--codeFont);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li > a::after {
+  color: color-mix(in srgb, var(--action-accent) 65%, var(--darkgray));
+  content: "›";
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li > a:hover {
+  border-color: color-mix(in srgb, var(--action-accent) 42%, var(--lightgray));
+  color: var(--dark);
+  background: color-mix(in srgb, var(--action-accent) 8%, var(--light));
+  box-shadow: 0 0.48rem 1rem rgb(13 38 67 / 8%);
+  filter: none;
+  transform: translateY(-2px);
+}
+
+article .callout:has(a.chapter-resource) .callout-content > ul > li > a.chapter-resource--download {
+  --action-accent: #0d9668;
+}
+
+article
+  .callout:has(a.chapter-resource)
+  .callout-content
+  > ul
+  > li
+  > a.chapter-resource--download::before {
+  content: "↓";
+  font-size: 1rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="/tp/"]::before {
+  content: "✎" !important;
+  font-size: 0.9rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="-interactif.html"] {
+  --action-accent: #7452d6;
+}
+
+article .callout:has(a.chapter-resource) a[href*="-interactif.html"]::before {
+  content: "▣" !important;
+  font-size: 0.92rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="-jeu.html"] {
+  --action-accent: #d56b1f;
+}
+
+article .callout:has(a.chapter-resource) a[href*="jeu"]::before {
+  content: "▶" !important;
+}
+
+article .callout:has(a.chapter-resource) a[href*="schema"]::before {
+  content: "◎" !important;
+  font-size: 1rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="nat-traduction"]::before {
+  content: "⇄" !important;
+  font-size: 1rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="cisco-packet-tracer-commandes"]::before {
+  content: ">_" !important;
+  font-size: 0.64rem;
+}
+
+article .callout:has(a.chapter-resource) a[href*="note-nat"]::before {
+  content: "NAT" !important;
+  font-size: 0.53rem;
+}
+
+article.revision-index .markdown-preview-view > h1:first-of-type {
+  margin: 0 0 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--secondary) 38%, var(--lightgray));
+  border-radius: 1rem;
+  color: var(--dark);
+  background:
+    radial-gradient(
+      circle at 95% 0,
+      color-mix(in srgb, var(--secondary) 20%, transparent),
+      transparent 16rem
+    ),
+    color-mix(in srgb, var(--secondary) 8%, var(--light));
+  box-shadow: 0 0.65rem 1.8rem rgb(0 0 0 / 8%);
+}
+
+body:has(article.revision-index) h1.article-title {
+  display: none;
+}
+
+article.revision-index h2 {
+  margin-top: 2.5rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid color-mix(in srgb, var(--secondary) 40%, var(--lightgray));
+}
+
+article.revision-index h3 {
+  color: var(--secondary);
+}
+
+article.revision-index table {
+  display: table;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--lightgray);
+  border-radius: 0.65rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 0.2rem 0.7rem rgb(0 0 0 / 5%);
+}
+
+article.revision-index thead {
+  background: color-mix(in srgb, var(--secondary) 13%, var(--light));
+}
+
+article.revision-index tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--lightgray) 22%, transparent);
+}
+
+article.revision-index th,
+article.revision-index td {
+  padding: 0.65rem 0.75rem;
+}
+
+.obsidian-download {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--secondary) 45%, var(--lightgray));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--secondary) 10%, var(--light));
+  box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 8%);
+}
+
+.obsidian-download__icon {
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--light);
+  background: var(--secondary);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.obsidian-download__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.obsidian-download__content strong {
+  color: var(--dark);
+  font-size: 1.05rem;
+}
+
+.obsidian-download__content span {
+  color: var(--darkgray);
+  font-size: 0.92rem;
+}
+
+.obsidian-download a.obsidian-download__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border-radius: 0.55rem;
+  color: #fff;
+  background-color: var(--secondary);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    filter 150ms ease,
+    transform 150ms ease;
+}
+
+.obsidian-download a.obsidian-download__button:hover {
+  color: #fff;
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+@media all and ($mobile) {
+  article .callout:has(a.chapter-resource) .callout-content > ul {
+    grid-template-columns: 1fr;
+  }
+
+  article .callout:has(a.chapter-resource) .callout-content > ul > li > a {
+    min-height: 4rem;
+    font-size: 0.84rem;
+  }
+
+  .obsidian-download {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .obsidian-download a.obsidian-download__button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
