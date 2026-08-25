@@ -76,7 +76,7 @@ Ce sont exactement les réflexes qu'on réutilisera aux chapitres 3 à 6 : aprè
 > [!NOTE]
 > **Structure simplifiée d'un fichier `.service`**
 >
-> ```=
+> ```ini
 > [Unit]
 > Description=Mon service personnalisé
 > Wants=network-online.target
@@ -93,6 +93,109 @@ Ce sont exactement les réflexes qu'on réutilisera aux chapitres 3 à 6 : aprè
 > - `[Unit]` : description et dépendances — `Wants=` attire la cible dans la transaction et `After=` impose l'ordre. `network-online.target` signifie que le gestionnaire réseau considère la connectivité configurée ; ce n'est pas une garantie permanente d'accès à Internet.
 > - `[Service]` : la commande à exécuter, et le comportement en cas de crash (`Restart=on-failure` relance automatiquement)
 > - `[Install]` : dans quelle target le service doit être activé quand on fait `enable`
+
+#### Paramètres importants de `[Unit]`
+
+La section `[Unit]` décrit l'unité et ses relations avec les autres unités. Une **dépendance** (`Wants=`, `Requires=`) et un **ordre** (`After=`, `Before=`) sont deux notions différentes : demander le démarrage d'une unité ne précise pas automatiquement laquelle doit démarrer en premier.
+
+| Directive                | Rôle                                                                               | Exemple et point d'attention                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `Description=`           | Texte court affiché par `systemctl status`                                         | `Description=Collecteur de métriques local`                                                                  |
+| `Documentation=`         | Référence vers une page de manuel ou une URL                                       | `Documentation=man:mon-agent(8)`                                                                             |
+| `Wants=`                 | Dépendance souple : systemd essaie aussi de démarrer l'unité indiquée              | `Wants=network-online.target` ; son échec ne fait pas forcément échouer notre unité                          |
+| `Requires=`              | Dépendance forte : l'unité requise doit être activée avec celle-ci                 | `Requires=postgresql.service` ; ajouter souvent `After=` pour imposer l'ordre                                |
+| `Requisite=`             | Exige que l'autre unité soit déjà active sans essayer de la démarrer               | Utile pour refuser immédiatement un démarrage hors contexte                                                  |
+| `After=`                 | Place l'unité **après** une autre dans l'ordre de démarrage                        | `After=network-online.target` ; ne crée aucune dépendance à lui seul                                         |
+| `Before=`                | Place l'unité **avant** une autre                                                  | `Before=multi-user.target`                                                                                   |
+| `Conflicts=`             | Empêche deux unités d'être actives simultanément                                   | `Conflicts=ancien-agent.service`                                                                             |
+| `BindsTo=`               | Lie fortement les cycles de vie : si l'autre unité disparaît, celle-ci est arrêtée | Plus fort que `Requires=` ; à employer seulement si les destins sont réellement liés                         |
+| `PartOf=`                | Propage les opérations `stop` et `restart` depuis l'unité indiquée                 | `PartOf=application.target`                                                                                  |
+| `ConditionPathExists=`   | Exécute l'unité seulement si un chemin existe                                      | `ConditionPathExists=/etc/mon-agent.conf` ; condition non satisfaite = unité ignorée, pas forcément en échec |
+| `ConditionFileNotEmpty=` | Vérifie qu'un fichier existe et n'est pas vide                                     | `ConditionFileNotEmpty=/etc/mon-agent/token`                                                                 |
+| `AssertPathExists=`      | Comme une condition, mais l'échec de l'assertion fait échouer le démarrage         | À réserver aux prérequis réellement obligatoires                                                             |
+| `StartLimitIntervalSec=` | Fenêtre utilisée pour limiter les tentatives de démarrage                          | Exemple : `StartLimitIntervalSec=60s`                                                                        |
+| `StartLimitBurst=`       | Nombre de démarrages autorisés dans cette fenêtre                                  | Exemple : `StartLimitBurst=5`                                                                                |
+
+> [!TIP] Dépendance ≠ ordre
+> `Requires=postgresql.service` demande PostgreSQL, mais ne garantit pas qu'il soit démarré avant l'application. Pour exprimer les deux intentions, utiliser `Requires=postgresql.service` **et** `After=postgresql.service`.
+
+#### Paramètres importants de `[Service]`
+
+| Directive              | Rôle                                                                       | Exemple et point d'attention                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `Type=`                | Indique à systemd comment déterminer que le démarrage est terminé          | `simple`, `exec`, `forking`, `oneshot`, `notify`, `dbus` ou `idle` ; voir le tableau suivant                    |
+| `ExecStartPre=`        | Commande exécutée avant le programme principal                             | Peut être répétée ; une erreur arrête normalement le démarrage                                                  |
+| `ExecCondition=`       | Test préalable dont certains codes peuvent ignorer proprement l'unité      | Pratique pour une condition nécessitant une commande plutôt qu'un simple chemin                                 |
+| `ExecStart=`           | Commande principale du service                                             | Utiliser un chemin absolu ; plusieurs lignes ne sont permises que dans des cas précis, notamment `Type=oneshot` |
+| `ExecStartPost=`       | Commande lancée après le démarrage réussi                                  | Convient à une vérification ou une initialisation complémentaire courte                                         |
+| `ExecReload=`          | Commande utilisée par `systemctl reload`                                   | À définir seulement si le programme sait réellement relire sa configuration                                     |
+| `ExecStop=`            | Arrêt propre explicite                                                     | Sans cette directive, systemd envoie les signaux prévus au processus selon `KillMode=`                          |
+| `ExecStopPost=`        | Action exécutée après l'arrêt, y compris après certains échecs             | Utile pour nettoyer un état temporaire ou écrire une preuve                                                     |
+| `Restart=`             | Politique de relance automatique                                           | `no`, `on-success`, `on-failure`, `on-abnormal`, `on-abort`, `on-watchdog` ou `always`                          |
+| `RestartSec=`          | Délai avant une relance                                                    | `RestartSec=5s` évite une boucle instantanée                                                                    |
+| `User=` / `Group=`     | Identité Unix du processus                                                 | Préférer un compte de service dédié plutôt que `root` lorsque c'est possible                                    |
+| `SupplementaryGroups=` | Groupes supplémentaires accordés au processus                              | Exemple : `SupplementaryGroups=adm` pour un besoin de lecture contrôlé                                          |
+| `WorkingDirectory=`    | Répertoire courant du processus                                            | `WorkingDirectory=/srv/mon-application`                                                                         |
+| `Environment=`         | Définit une variable directement dans l'unité                              | `Environment="MODE=production"` ; ne pas y placer de secret                                                     |
+| `EnvironmentFile=`     | Charge des variables depuis un fichier                                     | `EnvironmentFile=-/etc/default/mon-agent` ; le préfixe `-` rend le fichier facultatif                           |
+| `RuntimeDirectory=`    | Crée un dossier sous `/run` avec les bons droits pendant la vie du service | `RuntimeDirectory=mon-agent` crée `/run/mon-agent`                                                              |
+| `StateDirectory=`      | Crée un répertoire d'état persistant sous `/var/lib`                       | `StateDirectory=mon-agent` crée `/var/lib/mon-agent`                                                            |
+| `TimeoutStartSec=`     | Temps maximal accordé au démarrage                                         | `TimeoutStartSec=30s`                                                                                           |
+| `TimeoutStopSec=`      | Temps maximal accordé à l'arrêt propre                                     | Après expiration, systemd peut forcer l'arrêt                                                                   |
+| `SuccessExitStatus=`   | Codes ou signaux considérés comme un succès en plus de `0`                 | Exemple : `SuccessExitStatus=0 2 SIGTERM`                                                                       |
+| `RemainAfterExit=`     | Maintient l'unité `active` après la fin du processus                       | Souvent associé à `Type=oneshot` pour représenter une action appliquée                                          |
+| `StandardOutput=`      | Destination de la sortie standard                                          | `journal`, `null`, `tty` ou une destination fichier prise en charge par la version de systemd                   |
+| `StandardError=`       | Destination de la sortie d'erreur                                          | `journal` permet une lecture avec `journalctl -u`                                                               |
+| `SyslogIdentifier=`    | Nom affiché dans le journal pour les messages du service                   | `SyslogIdentifier=mon-agent`                                                                                    |
+| `KillSignal=`          | Signal envoyé lors de l'arrêt                                              | `SIGTERM` par défaut ; le programme doit avoir le temps de se fermer proprement                                 |
+| `KillMode=`            | Définit quels processus du groupe de contrôle sont arrêtés                 | `control-group` est le comportement sûr habituel ; éviter de laisser des processus enfants orphelins            |
+
+#### Choisir la bonne valeur de `Type=`
+
+| Valeur    | Quand l'utiliser                                                                             | Quand systemd considère le service démarré                                                   |
+| --------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `simple`  | Programme long qui reste au premier plan                                                     | Dès que le processus est lancé ; une erreur très précoce peut être moins clairement détectée |
+| `exec`    | Programme long classique, choix pertinent pour une unité personnalisée                       | Après la réussite de l'appel système qui exécute réellement le binaire                       |
+| `forking` | Ancien démon qui se détache en créant un processus enfant                                    | Après la sortie du processus parent ; utiliser si possible `PIDFile=`                        |
+| `oneshot` | Script ou commande courte qui effectue une action puis se termine                            | Lorsque toutes les commandes `ExecStart=` sont terminées avec succès                         |
+| `notify`  | Programme compatible avec `sd_notify()`                                                      | Quand le programme envoie explicitement `READY=1`                                            |
+| `dbus`    | Service considéré prêt après l'acquisition d'un nom D-Bus                                    | Quand le nom défini par `BusName=` est acquis                                                |
+| `idle`    | Comme `simple`, mais l'exécution est brièvement retardée pour rendre la console plus lisible | Après le lancement ; ce type n'est pas un mécanisme d'ordre ou de dépendance                 |
+
+> [!NOTE] Valeur conseillée en pratique
+> Pour un démon moderne qui reste au premier plan, préférer `Type=exec` si la version de systemd le prend en charge. Pour un script ponctuel déclenché par un timer, utiliser généralement `Type=oneshot`.
+
+#### Sécuriser un service personnalisé
+
+| Directive                | Protection apportée                                                      | Exemple                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `NoNewPrivileges=yes`    | Interdit au processus et à ses enfants d'acquérir de nouveaux privilèges | Bon réglage par défaut pour beaucoup d'agents                                           |
+| `PrivateTmp=yes`         | Donne au service ses propres espaces `/tmp` et `/var/tmp`                | Évite certains échanges involontaires avec les autres services                          |
+| `ProtectSystem=`         | Rend tout ou partie du système de fichiers en lecture seule              | `ProtectSystem=strict` demande ensuite d'autoriser explicitement les chemins d'écriture |
+| `ProtectHome=`           | Masque ou protège `/home`, `/root` et `/run/user`                        | `ProtectHome=read-only` ou `yes` selon le besoin                                        |
+| `ReadWritePaths=`        | Réautorise précisément certains chemins en écriture                      | `ReadWritePaths=/var/lib/mon-agent`                                                     |
+| `CapabilityBoundingSet=` | Limite les capacités Linux disponibles                                   | N'accorder que les capacités réellement nécessaires                                     |
+
+Tester les protections disponibles pour une unité avec :
+
+```bash
+systemd-analyze security mon-service.service
+```
+
+#### Paramètres importants de `[Install]`
+
+Cette section est surtout utilisée par `systemctl enable` et `disable`. Elle ne démarre pas le service immédiatement.
+
+| Directive          | Effet lors de `systemctl enable`                                            | Exemple                                                           |
+| ------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `WantedBy=`        | Crée un lien dans le répertoire `.wants/` de la cible                       | `WantedBy=multi-user.target` pour un service système habituel     |
+| `RequiredBy=`      | Crée une dépendance forte depuis la cible                                   | À utiliser seulement si l'échec du service doit affecter la cible |
+| `Alias=`           | Crée un autre nom permettant de référencer l'unité                          | `Alias=collecteur.service`                                        |
+| `Also=`            | Active ou désactive d'autres unités en même temps                           | Utile pour un couple d'unités administré ensemble                 |
+| `DefaultInstance=` | Définit l'instance utilisée lors de l'activation d'un modèle `nom@.service` | Exemple : `DefaultInstance=principal`                             |
+
+> [!WARNING] `[Install]` n'est pas lu comme `[Unit]`
+> `WantedBy=` n'agit qu'au moment de `systemctl enable`. Après avoir ajouté ou modifié une unité : `systemctl daemon-reload`, puis `systemctl enable --now NOM.service` si elle doit être activée au démarrage **et** lancée immédiatement.
 
 ### Comprendre les états et les dépendances
 

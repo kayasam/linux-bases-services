@@ -60,24 +60,24 @@ options {
 Dans `/etc/bind/named.conf.local` :
 
 ```text
-zone "dawan-s35.local" {
+zone "founil.lab" {
         type master;
-        file "/var/cache/bind/db.dawan-s35.local";
+        file "/var/cache/bind/db.founil.lab";
 };
 ```
 
-Créer le fichier de zone `/var/cache/bind/db.dawan-s35.local` :
+Créer le fichier de zone `/var/cache/bind/db.founil.lab` :
 
 ```text
 $TTL    604800
-@       IN      SOA     ns.dawan-s35.local. admin.dawan-s35.local. (
+@       IN      SOA     ns.founil.lab. admin.founil.lab. (
                               2       ; Serial (a incrementer a chaque modification)
                          604800       ; Refresh
                           86400       ; Retry
                         2419200       ; Expire
                          604800 )     ; Negative Cache TTL
 
-@       IN      NS      ns.dawan-s35.local.
+@       IN      NS      ns.founil.lab.
 ns      IN      A       192.168.56.200
 www     IN      A       192.168.56.200
 mail    IN      A       192.168.56.200
@@ -87,21 +87,21 @@ ftp     IN      CNAME   www
 > [!WARNING]
 > Le champ **Serial** doit être incrémenté à chaque modification afin que d'éventuels serveurs secondaires détectent une nouvelle version de la zone. Le cache des clients dépend, lui, des valeurs TTL. Une réponse ancienne peut donc persister jusqu'à expiration du TTL même si le serial a été augmenté.
 
-> [!WARNING] Éviter `.local` hors du labo existant
-> Le suffixe `.local` est réservé à mDNS et peut provoquer des comportements différents selon les postes. Pour un nouveau laboratoire sans délégation DNS, préférer le domaine réservé `dawan.test`. Les exemples historiques gardent ici `dawan-s35.local` pour rester compatibles avec les TP existants.
+> [!WARNING] `.local` est réservé à mDNS
+> Les noms terminés par `.local` sont résolus par **mDNS** sur le lien local, notamment par Avahi, Bonjour et de nombreux postes clients. Les utiliser dans une zone BIND classique peut provoquer des réponses incohérentes ou empêcher la requête d'atteindre le serveur DNS configuré. Cette formation utilise donc la zone interne `founil.lab`. Elle est réservée au réseau isolé du laboratoire et ne doit pas être publiée comme un domaine Internet.
 
 ### Lire les principaux enregistrements
 
-| Type         | Rôle                                    | Exemple                            |
-| ------------ | --------------------------------------- | ---------------------------------- |
-| `A` / `AAAA` | nom vers IPv4 / IPv6                    | `www IN A 192.168.56.200`          |
-| `CNAME`      | alias vers un autre nom                 | `ftp IN CNAME www`                 |
-| `MX`         | serveur recevant le courrier            | `@ IN MX 10 mail.dawan-s35.local.` |
-| `NS`         | serveur autoritaire de la zone          | `@ IN NS ns.dawan-s35.local.`      |
-| `PTR`        | adresse vers nom, dans une zone inverse | `200 IN PTR mail.dawan-s35.local.` |
-| `TXT`        | texte de politique ou validation        | SPF, validation de domaine         |
+| Type         | Rôle                                    | Exemple                       |
+| ------------ | --------------------------------------- | ----------------------------- |
+| `A` / `AAAA` | nom vers IPv4 / IPv6                    | `www IN A 192.168.56.200`     |
+| `CNAME`      | alias vers un autre nom                 | `ftp IN CNAME www`            |
+| `MX`         | serveur recevant le courrier            | `@ IN MX 10 mail.founil.lab.` |
+| `NS`         | serveur autoritaire de la zone          | `@ IN NS ns.founil.lab.`      |
+| `PTR`        | adresse vers nom, dans une zone inverse | `200 IN PTR mail.founil.lab.` |
+| `TXT`        | texte de politique ou validation        | SPF, validation de domaine    |
 
-Le point final d'un nom complet est essentiel dans un fichier de zone. Sans lui, BIND ajoute le nom de la zone : `mail.dawan-s35.local` sans point deviendrait `mail.dawan-s35.local.dawan-s35.local`.
+Le point final d'un nom complet est essentiel dans un fichier de zone. Sans lui, BIND ajoute le nom de la zone : `mail.founil.lab` sans point deviendrait `mail.founil.lab.founil.lab`.
 
 ---
 
@@ -109,15 +109,15 @@ Le point final d'un nom complet est essentiel dans un fichier de zone. Sans lui,
 
 ```bash
 named-checkconf                                    # Vérifie la syntaxe globale
-named-checkzone dawan-s35.local /var/cache/bind/db.dawan-s35.local
+named-checkzone founil.lab /var/cache/bind/db.founil.lab
 
 sudo rndc reload
 sudo systemctl enable --now bind9
 
-dig @192.168.56.200 www.dawan-s35.local A
-dig @192.168.56.200 ftp.dawan-s35.local CNAME
-dig @192.168.56.200 dawan-s35.local SOA
-host mail.dawan-s35.local 192.168.56.200
+dig @192.168.56.200 www.founil.lab A
+dig @192.168.56.200 ftp.founil.lab CNAME
+dig @192.168.56.200 founil.lab SOA
+host mail.founil.lab 192.168.56.200
 ```
 
 `rndc reload` recharge les zones sans interrompre le service. Une fois la syntaxe validée, c'est préférable à un redémarrage complet.
@@ -125,8 +125,8 @@ host mail.dawan-s35.local 192.168.56.200
 ### Interpréter `dig` et diagnostiquer
 
 ```bash
-dig @192.168.56.200 www.dawan-s35.local +noall +answer
-dig @192.168.56.200 www.dawan-s35.local +comments
+dig @192.168.56.200 www.founil.lab +noall +answer
+dig @192.168.56.200 www.founil.lab +comments
 ss -lunpt | grep ':53'
 sudo journalctl -u bind9 --since "5 minutes ago"
 ```

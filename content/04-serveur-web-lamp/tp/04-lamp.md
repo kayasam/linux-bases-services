@@ -11,7 +11,7 @@
 _**Consigne**_ :
 
 1. Installer la pile LAMP (Apache, MariaDB, PHP)
-2. Créer un virtual host pour votre propre domaine (`www.xxx-s35.local`), avec un `DocumentRoot` dédié
+2. Créer un virtual host pour `www.founil.lab`, avec un `DocumentRoot` dédié
 3. Activer ce site et recharger Apache
 4. Créer une page `info.php` affichant les informations PHP, et la tester depuis un navigateur
 5. Créer une base de données et un utilisateur MariaDB dédié à cette base

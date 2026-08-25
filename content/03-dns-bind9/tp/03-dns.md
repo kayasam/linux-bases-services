@@ -12,7 +12,7 @@ _**Consigne**_ :
 
 1. Installer `bind9` et `bind9-dnsutils`
 2. Configurer un forwarder vers un DNS public de votre choix (ex : 9.9.9.9)
-3. Créer une zone pour votre propre domaine (préférer `xxx-s35.test` ; utiliser `.local` uniquement si le laboratoire existant l'impose)
+3. Créer la zone interne `founil.lab` (`.local` est réservé à mDNS et ne doit pas être utilisé pour cette zone BIND)
 4. Ajouter au moins : un enregistrement NS, un A pour `www`, un CNAME pour `ftp`
 5. Vérifier la syntaxe de la zone avant de redémarrer le service
     <details>
@@ -20,7 +20,7 @@ _**Consigne**_ :
     Une commande `named-check...` est spécifique à la vérification d'un fichier de zone (à distinguer de la vérification de la configuration globale).
     </details>
 6. Redémarrer `bind9` et l'activer au démarrage
-7. Tester la résolution de `www.xxx-s35.local` et `ftp.xxx-s35.local` avec `dig`
+7. Tester la résolution de `www.founil.lab` et `ftp.founil.lab` avec `dig`
 8. Modifier l'IP de `www`, ré-incrémenter le Serial, recharger et re-tester
     <details>
     <summary>Clique ici pour un indice</summary>

@@ -37,7 +37,7 @@ Créer `/etc/apache2/sites-available/dawan-s35.conf` :
 
 ```text
 <VirtualHost *:80>
-        ServerName www.dawan-s35.local
+        ServerName www.founil.lab
         DocumentRoot /var/www/dawan-s35
 
         ErrorLog ${APACHE_LOG_DIR}/dawan-s35-error.log
@@ -93,7 +93,7 @@ if ($mysqli->connect_error) {
 echo "Connexion a la base dawan_s35 reussie !";
 ```
 
-Depuis le navigateur de l'hôte : `http://192.168.56.200/info.php` et `http://192.168.56.200/index.php` (en ayant préalablement pointé `www.dawan-s35.local` vers cette IP, via le DNS du chapitre 3 ou le fichier `hosts` local).
+Depuis le navigateur de l'hôte : `http://192.168.56.200/info.php` et `http://192.168.56.200/index.php` (en ayant préalablement pointé `www.founil.lab` vers cette IP, via le DNS du chapitre 3 ou le fichier `hosts` local).
 
 > [!WARNING] Retirer les pages de test
 > `phpinfo()` divulgue la version de PHP, les modules, chemins et une partie de la configuration. Supprimer `info.php` dès la validation terminée. Les identifiants SQL ne doivent pas rester en clair dans un fichier distribué ou versionné ; l'exemple sert uniquement au laboratoire isolé.
@@ -104,7 +104,7 @@ Plusieurs sites partagent la même IP et le même port. Apache utilise l'en-têt
 
 ```bash
 apache2ctl -S
-curl -v http://192.168.56.200/ -H 'Host: www.dawan-s35.local'
+curl -v http://192.168.56.200/ -H 'Host: www.founil.lab'
 ```
 
 Tester uniquement l'adresse IP peut donc afficher le site par défaut alors que le vhost fonctionne correctement avec son nom.
@@ -122,9 +122,9 @@ sudo find /var/www/dawan-s35 -type f -exec chmod 0640 {} \;
 ### Diagnostic couche par couche
 
 ```bash
-getent hosts www.dawan-s35.local
+getent hosts www.founil.lab
 ss -lntp | grep ':80'
-curl -v http://www.dawan-s35.local/
+curl -v http://www.founil.lab/
 sudo apache2ctl configtest
 sudo tail -f /var/log/apache2/dawan-s35-error.log
 php -m | grep -i mysqli

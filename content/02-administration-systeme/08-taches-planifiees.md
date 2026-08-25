@@ -108,16 +108,82 @@ RandomizedDelaySec=5m
 WantedBy=timers.target
 ```
 
+#### Paramètres d'un fichier `.timer`
+
+Un timer ne contient pas la commande métier : il décide **quand** déclencher une autre unité. Par défaut, `sauvegarde.timer` déclenche `sauvegarde.service`. Cette séparation permet de tester le service manuellement sans attendre l'échéance.
+
+##### Section `[Unit]`
+
+Les directives générales sont les mêmes que pour un service :
+
+| Directive              | Rôle dans un timer                                   | Exemple                                                  |
+| ---------------------- | ---------------------------------------------------- | -------------------------------------------------------- |
+| `Description=`         | Nom lisible dans `systemctl status` et `list-timers` | `Description=Planification de la sauvegarde quotidienne` |
+| `Documentation=`       | Lien vers une documentation ou une page de manuel    | `Documentation=man:sauvegarde(8)`                        |
+| `Wants=` / `Requires=` | Ajoute une dépendance souple ou forte                | Rarement nécessaire pour un timer simple                 |
+| `After=` / `Before=`   | Impose un ordre sans créer de dépendance             | Ne pas utiliser pour exprimer l'heure de déclenchement   |
+| `ConditionPathExists=` | Charge le timer seulement si un prérequis existe     | `ConditionPathExists=/etc/sauvegarde.conf`               |
+
+##### Section `[Timer]`
+
+| Directive             | Déclenchement ou comportement                                         | Exemple et point d'attention                                                                                                 |
+| --------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `OnCalendar=`         | Échéance calendaire : date, jour et heure                             | `OnCalendar=Mon..Fri 09:00` ; valider avec `systemd-analyze calendar`                                                        |
+| `OnActiveSec=`        | Délai après l'activation du timer                                     | `OnActiveSec=2min`                                                                                                           |
+| `OnBootSec=`          | Délai après le démarrage du système                                   | `OnBootSec=10min` ; si le timer est activé tardivement et que l'échéance est déjà passée, il peut partir immédiatement       |
+| `OnStartupSec=`       | Délai après le démarrage du gestionnaire systemd                      | Surtout utile avec les services utilisateur `systemd --user`                                                                 |
+| `OnUnitActiveSec=`    | Délai après la dernière activation de l'unité déclenchée              | `OnUnitActiveSec=15min` pour une répétition relative                                                                         |
+| `OnUnitInactiveSec=`  | Délai après le moment où l'unité déclenchée est redevenue inactive    | Utile pour attendre après la **fin** d'un traitement                                                                         |
+| `Unit=`               | Unité à déclencher                                                    | `Unit=export-base.service` ; sans cette ligne, même nom que le timer avec suffixe `.service`                                 |
+| `Persistent=`         | Rattrape une échéance `OnCalendar=` manquée pendant l'arrêt           | `Persistent=true` ; ne transforme pas les déclencheurs monotones `OnBootSec=` ou `OnUnitActiveSec=` en historique persistant |
+| `AccuracySec=`        | Fenêtre dans laquelle systemd peut regrouper les réveils              | `AccuracySec=1min` économise des réveils ; utiliser une valeur courte seulement si la précision est nécessaire               |
+| `RandomizedDelaySec=` | Ajoute un délai aléatoire entre `0` et la valeur indiquée             | `RandomizedDelaySec=5m` évite que tout un parc travaille simultanément                                                       |
+| `FixedRandomDelay=`   | Rend le délai aléatoire stable pour une même machine et un même timer | `FixedRandomDelay=true` facilite une répartition durable dans un parc                                                        |
+| `WakeSystem=`         | Autorise le timer à réveiller une machine suspendue                   | `WakeSystem=true` nécessite une plateforme et des droits compatibles                                                         |
+| `RemainAfterElapse=`  | Garde le timer chargé après son déclenchement                         | Généralement laisser la valeur par défaut ; `false` convient à certains timers transitoires                                  |
+| `OnClockChange=`      | Déclenche si l'horloge temps réel fait un saut important              | `OnClockChange=true`                                                                                                         |
+| `OnTimezoneChange=`   | Déclenche lors d'un changement de fuseau horaire                      | `OnTimezoneChange=true`                                                                                                      |
+
+> [!NOTE] Plusieurs déclencheurs se cumulent
+> Plusieurs lignes `OnCalendar=` ou plusieurs directives `On…Sec=` sont possibles. Le timer se déclenche lorsqu'**une** des échéances est atteinte. Une valeur vide, par exemple `OnCalendar=`, réinitialise les valeurs précédemment héritées dans une surcharge.
+
+##### Quel déclencheur choisir ?
+
+| Besoin                                                      | Directive adaptée        | Exemple                                  |
+| ----------------------------------------------------------- | ------------------------ | ---------------------------------------- |
+| Tous les jours à une heure civile précise                   | `OnCalendar=`            | `OnCalendar=*-*-* 02:00:00`              |
+| Quelques minutes après chaque boot                          | `OnBootSec=`             | `OnBootSec=5min`                         |
+| Répéter à intervalle régulier depuis la dernière activation | `OnUnitActiveSec=`       | `OnUnitActiveSec=30min`                  |
+| Attendre un délai après la fin réelle du traitement         | `OnUnitInactiveSec=`     | `OnUnitInactiveSec=10min`                |
+| Lancer une première fois puis répéter                       | Combiner deux directives | `OnBootSec=2min` et `OnUnitActiveSec=1h` |
+| Répartir la charge sur plusieurs serveurs                   | `RandomizedDelaySec=`    | `RandomizedDelaySec=15min`               |
+
+##### Section `[Install]`
+
+| Directive     | Rôle                                      | Valeur habituelle                                      |
+| ------------- | ----------------------------------------- | ------------------------------------------------------ |
+| `WantedBy=`   | Rend le timer activable au démarrage      | `WantedBy=timers.target`                               |
+| `RequiredBy=` | Crée une dépendance forte depuis la cible | Rare pour un timer ; préférer généralement `WantedBy=` |
+| `Also=`       | Active une autre unité en même temps      | Peut servir pour un ensemble d'unités liées            |
+
+> [!WARNING] Activer le timer, pas forcément le service
+> Pour une tâche uniquement planifiée, exécuter `systemctl enable --now sauvegarde.timer`. Le `.service` reste déclenché par le timer et peut être testé avec `systemctl start sauvegarde.service`. Activer aussi le service au boot provoquerait une exécution supplémentaire indépendante du calendrier.
+
+#### Commandes de validation et d'observation
+
 ```bash
 sudo systemd-analyze calendar '*-*-* 02:00:00'
+sudo systemd-analyze verify /etc/systemd/system/sauvegarde.service /etc/systemd/system/sauvegarde.timer
 sudo systemctl daemon-reload
 sudo systemctl enable --now sauvegarde.timer
-systemctl list-timers sauvegarde.timer
+systemctl list-timers sauvegarde.timer --all
+systemctl status sauvegarde.timer --no-pager
 sudo systemctl start sauvegarde.service       # test immédiat
-sudo journalctl -u sauvegarde.service
+systemctl show sauvegarde.service -p Result -p ExecMainStatus
+sudo journalctl -u sauvegarde.service --since "10 minutes ago" --no-pager
 ```
 
-`Persistent=true` rattrape au prochain démarrage une échéance manquée lorsque la machine était éteinte. `RandomizedDelaySec` évite que toutes les machines d'un parc lancent la même tâche exactement au même instant.
+`systemd-analyze calendar` traduit une expression `OnCalendar=` et affiche ses prochaines occurrences. `systemd-analyze verify` contrôle la syntaxe et certaines relations entre unités. `list-timers` prouve la dernière et la prochaine échéance ; `show` et `journalctl` prouvent le résultat du service déclenché.
 
 > [!NOTE]
 > **À retenir**

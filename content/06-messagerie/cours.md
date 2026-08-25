@@ -28,7 +28,7 @@ Moyen mnémotechnique : Postfix **poste** le courrier, Dovecot le **range dans l
 sudo apt install -y postfix
 ```
 
-Lors de l'installation, choisir **Internet Site**, et renseigner le nom de domaine (ex : `dawan-s35.local`).
+Lors de l'installation, choisir **Internet Site**, et renseigner le nom de domaine interne `founil.lab`.
 Pour reconfigurer après coup :
 
 ```bash
@@ -38,8 +38,8 @@ sudo dpkg-reconfigure postfix
 Extrait important de `/etc/postfix/main.cf` :
 
 ```text
-myhostname = mail.dawan-s35.local
-mydomain = dawan-s35.local
+myhostname = mail.founil.lab
+mydomain = founil.lab
 mydestination = $myhostname, $mydomain, localhost
 home_mailbox = Maildir/
 ```
@@ -95,7 +95,7 @@ sudo systemctl enable dovecot
 
 ```bash
 sudo apt install -y mailutils
-echo "Ceci est un test" | mail -s "Sujet du test" bob@dawan-s35.local
+echo "Ceci est un test" | mail -s "Sujet du test" bob@founil.lab
 
 sudo ls /home/bob/Maildir/new/           # Le mail doit apparaitre ici
 
@@ -123,8 +123,8 @@ Puis saisir, ligne par ligne :
 
 ```text
 EHLO client-labo
-MAIL FROM:<alice@dawan-s35.local>
-RCPT TO:<bob@dawan-s35.local>
+MAIL FROM:<alice@founil.lab>
+RCPT TO:<bob@founil.lab>
 DATA
 Subject: test SMTP
 
@@ -175,7 +175,7 @@ Cette procédure est conservée uniquement pour compatibilité avec le TP histor
 Accéder à l'interface :
 
 - Admin : `http://192.168.56.200/rainloop/?admin` (identifiants par défaut `admin` / `12345`, à changer immédiatement)
-- Dans l'admin, section **Domaines** : créer un domaine `dawan-s35.local` avec IMAP = `localhost:143` (sans SSL) et SMTP = `localhost:25`
+- Dans l'admin, section **Domaines** : créer le domaine `founil.lab` avec IMAP = `localhost:143` (sans SSL) et SMTP = `localhost:25`
 - Webmail utilisateur : `http://192.168.56.200/rainloop/` — se connecter avec `alice`/mot de passe Linux d'alice
 
 > [!NOTE]
