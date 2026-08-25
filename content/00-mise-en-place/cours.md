@@ -1,4 +1,4 @@
-# Linux Administration : Bases + Services - s35 2026
+# Linux - Bases & Services
 
 > [!TIP] Commandes interactives
 > <a href="https://kayasam.github.io/linux-bases-services/00-mise-en-place/commandes.html" target="_blank">Comprendre les commandes du laboratoire et composer leurs options</a>

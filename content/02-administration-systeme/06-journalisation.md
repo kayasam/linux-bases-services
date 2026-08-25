@@ -68,12 +68,15 @@ Moyen mnémotechnique : plus le code est **bas**, plus c'est **grave** (0 = urge
 La **priority** répond à « quelle est la gravité du message ? ». La **facility** répond à « de quelle famille fonctionnelle provient-il ? ». Cette classification vient de syslog et reste enregistrée dans le champ structuré `SYSLOG_FACILITY` lorsqu'un programme la fournit.
 
 ```bash
-sudo journalctl --facility=auth                  # Facility auth uniquement
-sudo journalctl --facility=auth,authpriv         # Plusieurs facilities
-sudo journalctl --facility=kern -p warning       # Noyau + warning ou plus grave
-sudo journalctl --facility=cron --since today    # Tâches planifiées depuis aujourd'hui
-journalctl --facility=help                       # Valeurs reconnues par cette version
+sudo journalctl --facility auth                  # Facility auth uniquement
+sudo journalctl --facility auth,authpriv         # Plusieurs facilities
+sudo journalctl --facility kern -p warning       # Noyau + warning ou plus grave
+sudo journalctl --facility cron --since today    # Tâches planifiées depuis aujourd'hui
+journalctl --facility help                       # Valeurs reconnues par cette version
 ```
+
+> [!NOTE] Deux écritures valides
+> Les options longues GNU acceptent ici les deux formes : `--facility auth` et `--facility=auth`. Le cours utilise la forme avec une espace pour améliorer la lisibilité des exemples.
 
 | Code | Facility   | Origine ou usage habituel                                      |
 | ---- | ---------- | -------------------------------------------------------------- |

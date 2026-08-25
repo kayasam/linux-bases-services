@@ -1062,7 +1062,7 @@
             ["-f", "Suit les nouveaux événements."],
             ["-p warning", "Filtre un niveau et les plus graves."],
             [
-              "--facility=FACILITY",
+              "--facility FACILITY",
               "Filtre l'origine syslog : auth, authpriv, kern, mail, cron, local0...",
             ],
             ["--since TEMPS", "Début de fenêtre."],
@@ -1077,7 +1077,7 @@
             ],
             ["journalctl _PID=1234 -o verbose", "Filtre un PID et montre tous les champs."],
             [
-              "journalctl --facility=auth,authpriv --since today",
+              "journalctl --facility auth,authpriv --since today",
               "Regroupe les facilities d'authentification disponibles depuis aujourd'hui.",
             ],
           ],

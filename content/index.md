@@ -1,14 +1,14 @@
 ---
-title: Linux — Bases & Services
+title: Linux - Bases & Services
 description: Formation pratique d'administration Linux et de mise en œuvre de services pour TSSR.
 ---
 
-# Formation — Linux : Bases & Services
+# Linux - Bases & Services
 
 <section class="network-hero">
   <div class="network-hero__copy">
     <span class="network-kicker">Formation TSSR · laboratoire fil rouge</span>
-    <h2>Administrer Linux.<br>Démontrer chaque diagnostic.</h2>
+    <h2>Linux - Bases &amp; Services</h2>
     <p>Du stockage aux services réseau : cours détaillés, schémas SVG, travaux pratiques et pannes guidées pour apprendre à observer, expliquer et rétablir.</p>
     <div class="network-hero__actions">
       <a class="network-button network-button--primary" href="./00-mise-en-place/">Commencer le parcours <span aria-hidden="true">→</span></a>
