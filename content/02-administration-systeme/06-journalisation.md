@@ -63,6 +63,50 @@ sudo journalctl -p err..alert   # Intervalle de priorités
 
 Moyen mnémotechnique : plus le code est **bas**, plus c'est **grave** (0 = urgence absolue, 7 = bavardage de debug) — l'inverse d'une note scolaire.
 
+**Filtrer par origine fonctionnelle (facility)**
+
+La **priority** répond à « quelle est la gravité du message ? ». La **facility** répond à « de quelle famille fonctionnelle provient-il ? ». Cette classification vient de syslog et reste enregistrée dans le champ structuré `SYSLOG_FACILITY` lorsqu'un programme la fournit.
+
+```bash
+sudo journalctl --facility=auth                  # Facility auth uniquement
+sudo journalctl --facility=auth,authpriv         # Plusieurs facilities
+sudo journalctl --facility=kern -p warning       # Noyau + warning ou plus grave
+sudo journalctl --facility=cron --since today    # Tâches planifiées depuis aujourd'hui
+journalctl --facility=help                       # Valeurs reconnues par cette version
+```
+
+| Code | Facility   | Origine ou usage habituel                                      |
+| ---- | ---------- | -------------------------------------------------------------- |
+| 0    | `kern`     | Messages du noyau                                              |
+| 1    | `user`     | Programmes utilisateur ; facility générique par défaut         |
+| 2    | `mail`     | Système de messagerie : MTA, remise et consultation            |
+| 3    | `daemon`   | Démons système sans facility spécialisée                       |
+| 4    | `auth`     | Authentification et sécurité                                   |
+| 5    | `syslog`   | Messages internes du service syslog                            |
+| 6    | `lpr`      | Impression                                                     |
+| 7    | `news`     | Services Usenet/news                                           |
+| 8    | `uucp`     | Services UUCP historiques                                      |
+| 9    | `cron`     | Ordonnanceurs cron et at                                       |
+| 10   | `authpriv` | Authentification contenant potentiellement des données privées |
+| 11   | `ftp`      | Service FTP                                                    |
+| 12   | —          | Réservé                                                        |
+| 13   | —          | Réservé                                                        |
+| 14   | —          | Réservé                                                        |
+| 15   | —          | Réservé                                                        |
+| 16   | `local0`   | Usage local défini par l'administrateur ou l'application       |
+| 17   | `local1`   | Usage local défini par l'administrateur ou l'application       |
+| 18   | `local2`   | Usage local défini par l'administrateur ou l'application       |
+| 19   | `local3`   | Usage local défini par l'administrateur ou l'application       |
+| 20   | `local4`   | Usage local défini par l'administrateur ou l'application       |
+| 21   | `local5`   | Usage local défini par l'administrateur ou l'application       |
+| 22   | `local6`   | Usage local défini par l'administrateur ou l'application       |
+| 23   | `local7`   | Usage local défini par l'administrateur ou l'application       |
+
+Les facilities `local0` à `local7` n'ont pas de sens imposé : une entreprise peut, par exemple, réserver `local0` à une application métier et configurer rsyslog pour l'envoyer dans un fichier ou vers un collecteur distant dédié.
+
+> [!IMPORTANT] Limite du filtre
+> Une facility n'est ni une unité systemd ni le nom d'un programme. Certains messages écrits directement dans journald ne possèdent pas le champ `SYSLOG_FACILITY` ; ils ne ressortiront donc pas avec `--facility`. Pour cibler précisément un service, utiliser plutôt `-u`, `_COMM=`, `_EXE=` ou `SYSLOG_IDENTIFIER=` selon le contexte.
+
 ---
 
 ### Logs noyau : dmesg et journalctl -k
@@ -140,4 +184,5 @@ sudo journalctl --vacuum-time=30d       # politique ponctuelle, à employer cons
 >
 > - `journalctl` centralise noyau + services + authentification ; `dmesg`/`journalctl -k` isole le noyau.
 > - Priorités : plus le chiffre est bas, plus c'est grave (0 = système inutilisable, 7 = debug).
+> - Facilities : elles classent l'origine fonctionnelle (`auth`, `mail`, `cron`, `daemon`...), indépendamment de la gravité.
 > - `/var/log/` reste incontournable pour les programmes non intégrés à systemd — les deux sources se complètent, elles ne se remplacent pas totalement.

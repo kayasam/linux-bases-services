@@ -1056,11 +1056,15 @@
           "Journalisation",
           "Interroge le journal structuré de systemd.",
           "journalctl [OPTIONS] [CORRESPONDANCES]",
-          "journalctl filtre par unité, boot, priorité, temps, PID ou champ. Commencez large, puis réduisez sans perdre la chronologie.",
+          "journalctl filtre par unité, boot, priorité, facility, temps, PID ou champ. La facility décrit l'origine fonctionnelle du message ; la priorité décrit sa gravité.",
           [
             ["-u UNITE", "Filtre une unité."],
             ["-f", "Suit les nouveaux événements."],
             ["-p warning", "Filtre un niveau et les plus graves."],
+            [
+              "--facility=FACILITY",
+              "Filtre l'origine syslog : auth, authpriv, kern, mail, cron, local0...",
+            ],
             ["--since TEMPS", "Début de fenêtre."],
             ["--until TEMPS", "Fin de fenêtre."],
             ["-o short-iso", "Horodatage ISO lisible."],
@@ -1072,6 +1076,10 @@
               "Extrait une fenêtre récente pour SSH.",
             ],
             ["journalctl _PID=1234 -o verbose", "Filtre un PID et montre tous les champs."],
+            [
+              "journalctl --facility=auth,authpriv --since today",
+              "Regroupe les facilities d'authentification disponibles depuis aujourd'hui.",
+            ],
           ],
           "Conserver timestamp, unité/PID et premier message expliquant le symptôme.",
           "-p err peut cacher l'avertissement initial qui explique l'erreur finale.",
