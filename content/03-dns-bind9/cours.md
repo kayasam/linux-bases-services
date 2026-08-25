@@ -26,12 +26,21 @@ Un **serveur autoritaire** possède la source de vérité d'une zone. Un **réso
 sudo apt install -y bind9 bind9-dnsutils
 ```
 
-| Fichier                          | Rôle                                              |
-| -------------------------------- | ------------------------------------------------- |
-| `/etc/bind/named.conf`           | Point d'entrée, inclut les fichiers ci-dessous    |
-| `/etc/bind/named.conf.options`   | Options globales (forwarders, écoute réseau, ...) |
-| `/etc/bind/named.conf.local`     | Déclaration des zones hébergées localement        |
-| `/var/cache/bind/db.NOM_DE_ZONE` | Contenu d'une zone (les enregistrements DNS)      |
+| Fichier                        | Rôle                                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `/etc/bind/named.conf`         | Point d'entrée, inclut les fichiers ci-dessous                                              |
+| `/etc/bind/named.conf.options` | Options globales (forwarders, écoute réseau, ...)                                           |
+| `/etc/bind/named.conf.local`   | Déclaration des zones hébergées localement                                                  |
+| `/etc/bind/db.NOM_DE_ZONE`     | Zone primaire statique administrée manuellement                                             |
+| `/var/cache/bind/`             | Répertoire de travail et données transitoires, notamment les zones secondaires téléchargées |
+| `/var/lib/bind/`               | Zones que BIND doit modifier durablement, par exemple avec DDNS ou `nsupdate`               |
+
+> [!IMPORTANT] Choisir le répertoire selon la responsabilité du fichier
+> Sur Debian, une **zone primaire statique** fait partie de la configuration administrée : son fichier est placé dans `/etc/bind/` et référencé avec un chemin absolu. `/var/cache/bind/` est le répertoire de travail de `named` ; il convient notamment aux copies de zones secondaires, que le démon peut recréer. Une zone primaire mise à jour dynamiquement doit être placée dans `/var/lib/bind/`, où BIND peut conserver la zone et son journal `.jnl`.
+>
+> La directive `directory "/var/cache/bind";` ne signifie donc pas que toutes les zones doivent y être enregistrées. Elle sert de base aux chemins relatifs et aux fichiers de travail. Un chemin absolu tel que `/etc/bind/db.founil.lab` n'en dépend pas.
+>
+> Source officielle : [README.Debian du paquet BIND9 — organisation des fichiers de zones](https://sources.debian.org/src/bind9/1%3A9.20.4-4/debian/README.Debian/).
 
 ---
 
@@ -62,11 +71,20 @@ Dans `/etc/bind/named.conf.local` :
 ```text
 zone "founil.lab" {
         type master;
-        file "/var/cache/bind/db.founil.lab";
+        file "/etc/bind/db.founil.lab";
 };
 ```
 
-Créer le fichier de zone `/var/cache/bind/db.founil.lab` :
+Créer la zone primaire statique à partir du modèle fourni par Debian, puis l'éditer :
+
+```bash
+sudo cp /etc/bind/db.local /etc/bind/db.founil.lab
+sudoedit /etc/bind/db.founil.lab
+```
+
+Le fichier `/etc/bind/db.local` sert uniquement de modèle de syntaxe : toutes les valeurs relatives à `localhost` doivent être remplacées par celles de `founil.lab`.
+
+Contenu attendu dans `/etc/bind/db.founil.lab` :
 
 ```text
 $TTL    604800
@@ -109,7 +127,7 @@ Le point final d'un nom complet est essentiel dans un fichier de zone. Sans lui,
 
 ```bash
 named-checkconf                                    # Vérifie la syntaxe globale
-named-checkzone founil.lab /var/cache/bind/db.founil.lab
+named-checkzone founil.lab /etc/bind/db.founil.lab
 
 sudo rndc reload
 sudo systemctl enable --now bind9

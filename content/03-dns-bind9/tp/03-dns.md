@@ -12,7 +12,7 @@ _**Consigne**_ :
 
 1. Installer `bind9` et `bind9-dnsutils`
 2. Configurer un forwarder vers un DNS public de votre choix (ex : 9.9.9.9)
-3. Créer la zone interne `founil.lab` (`.local` est réservé à mDNS et ne doit pas être utilisé pour cette zone BIND)
+3. Créer la zone primaire statique `founil.lab` dans `/etc/bind/db.founil.lab`, à partir du modèle `/etc/bind/db.local` (`.local` est réservé à mDNS et ne doit pas être utilisé pour cette zone BIND)
 4. Ajouter au moins : un enregistrement NS, un A pour `www`, un CNAME pour `ftp`
 5. Vérifier la syntaxe de la zone avant de redémarrer le service
     <details>
