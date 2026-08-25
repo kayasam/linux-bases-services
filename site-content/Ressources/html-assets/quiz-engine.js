@@ -44,6 +44,7 @@
   let index = 0
   let score = 0
   let answered = false
+  let answerOffset = 0
 
   function shuffle(values) {
     const copy = values.slice()
@@ -52,6 +53,20 @@
       ;[copy[i], copy[j]] = [copy[j], copy[i]]
     }
     return copy
+  }
+
+  function distributeChoices(question, correctPosition) {
+    const distractors = shuffle(
+      question.choices
+        .map(function (_, choiceIndex) {
+          return choiceIndex
+        })
+        .filter(function (choiceIndex) {
+          return choiceIndex !== question.answer
+        }),
+    )
+    distractors.splice(correctPosition, 0, question.answer)
+    return distractors
   }
 
   function renderQuestion() {
@@ -67,12 +82,16 @@
     title.textContent = question.question
     answers.replaceChildren()
 
-    question.choices.forEach(function (choice, choiceIndex) {
+    const correctPosition = (index + answerOffset) % letters.length
+    const choiceOrder = distributeChoices(question, correctPosition)
+    choiceOrder.forEach(function (choiceIndex, displayedIndex) {
+      const choice = question.choices[choiceIndex]
       const button = document.createElement("button")
       button.type = "button"
       button.className = "answer"
       button.dataset.index = String(choiceIndex)
-      button.innerHTML = '<span class="answer-key">' + letters[choiceIndex] + "</span><span></span>"
+      button.innerHTML =
+        '<span class="answer-key">' + letters[displayedIndex] + "</span><span></span>"
       button.lastElementChild.textContent = choice
       button.addEventListener("click", function () {
         selectAnswer(choiceIndex)
@@ -156,6 +175,7 @@
     )
     index = 0
     score = 0
+    answerOffset = Math.floor(Math.random() * letters.length)
     panel.classList.remove("hidden")
     result.classList.remove("visible")
     renderQuestion()

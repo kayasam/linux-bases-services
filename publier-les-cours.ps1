@@ -65,6 +65,24 @@ Assert-Directory -Path (Join-Path $sourceRoot "assets") -Description "Le dossier
 Assert-Directory -Path $staticRoot -Description "Les pages statiques du site"
 Assert-Directory -Path (Join-Path $projectRoot ".git") -Description "Le dépôt Git"
 
+$requiredQuizFiles = @(
+  "00-mise-en-place\quiz.html",
+  "01-stockage\quiz.html",
+  "02-administration-systeme\quiz.html",
+  "02-administration-systeme\mini-quiz.html",
+  "03-dns-bind9\quiz.html",
+  "04-serveur-web-lamp\quiz.html",
+  "05-pare-feu-nftables\quiz.html",
+  "06-messagerie\quiz.html",
+  "Ressources\html-assets\quiz.css",
+  "Ressources\html-assets\quiz-engine.js",
+  "Ressources\html-assets\quiz-banks.js",
+  "Ressources\html-assets\quiz-banks-administration-mini.js"
+)
+foreach ($relativePath in $requiredQuizFiles) {
+  Assert-File -Path (Join-Path $staticRoot $relativePath) -Description "Ressource de quiz obligatoire"
+}
+
 if (Test-Path -LiteralPath $stageRoot) {
   Assert-InProject -Path $stageRoot
   Remove-Item -LiteralPath $stageRoot -Recurse -Force
