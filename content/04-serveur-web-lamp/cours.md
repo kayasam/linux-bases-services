@@ -1,8 +1,5 @@
 # 4. Service Web : pile LAMP (Apache + MariaDB + PHP)
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/04-serveur-web-lamp/commandes.html" target="_blank">Explorer les commandes Apache, PHP et MariaDB</a>
-
 **Objectifs** : installer Apache, MariaDB et PHP, créer un virtual host dédié, et faire dialoguer une page PHP avec une base de données.
 
 ![Trajet d'une requête dans une pile LAMP](Ressources/images/pile-lamp.svg)

@@ -1,8 +1,5 @@
 # 2.7 Observation des performances
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes CPU, mémoire et disque</a>
-
 **Objectifs** : savoir répondre à "pourquoi la machine est lente ?" en regardant CPU, mémoire et disque, avant de soupçonner le réseau ou l'application.
 
 ![Méthode de diagnostic TSSR](Ressources/images/diagnostic-tssr.svg)

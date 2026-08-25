@@ -1,8 +1,5 @@
 # 5. Pare-feu : nftables
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/05-pare-feu-nftables/commandes.html" target="_blank">Explorer les commandes nftables et les méthodes de preuve</a>
-
 **Objectifs** : comprendre le flux input/output/forward, écrire un jeu de règles nftables restrictif par défaut, et ne pas se couper l'accès SSH en le faisant.
 
 ![Parcours d'un paquet dans nftables](Ressources/images/parcours-nftables.svg)

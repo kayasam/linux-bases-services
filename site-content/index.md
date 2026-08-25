@@ -66,10 +66,6 @@ description: Formation pratique d'administration Linux et de mise en œuvre de s
     <span class="experience-card__icon" aria-hidden="true">⌕</span><span class="experience-card__eyebrow">Méthode terrain</span>
     <strong>Diagnostiquer sans deviner</strong><span>Partir du symptôme, vérifier chaque couche et produire une preuve.</span><b>Ouvrir la fiche →</b>
   </a>
-  <a class="experience-card experience-card--schema" href="./Ressources/guide-formateur">
-    <span class="experience-card__icon" aria-hidden="true">◎</span><span class="experience-card__eyebrow">Parcours pédagogique</span>
-    <strong>Exploiter le fil rouge</strong><span>Prédire, observer, provoquer une panne, rétablir et restituer.</span><b>Consulter le guide →</b>
-  </a>
   <a class="experience-card experience-card--revision" href="./01-stockage/tp/01-stockage">
     <span class="experience-card__icon" aria-hidden="true">>_</span><span class="experience-card__eyebrow">Premier laboratoire</span>
     <strong>Manipuler LVM</strong><span>Étendre la capacité, rendre le montage persistant et diagnostiquer fstab.</span><b>Commencer le TP →</b>

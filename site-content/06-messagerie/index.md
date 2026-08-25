@@ -1,5 +1,5 @@
 ---
-title: Service de messagerie
+title: 06. Service de messagerie
 description: Comprendre et mettre en œuvre une chaîne Postfix, Maildir et Dovecot.
 ---
 

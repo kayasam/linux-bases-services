@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Commandes interactives — Postfix, Maildir et Dovecot" />
+    <title>Commandes de messagerie — Linux TSSR</title>
+    <link rel="stylesheet" href="../Ressources/html-assets/commands.css" />
+    <script defer src="../Ressources/html-assets/commands-banks.js"></script>
+    <script defer src="../Ressources/html-assets/commands-engine.js"></script>
+  </head>
+  <body>
+    <main class="command-shell" data-command-bank="06-messagerie">
+      <nav class="command-topbar" aria-label="Navigation">
+        <a class="command-back" id="chapter-link" href="./">← Retour au chapitre</a
+        ><span class="command-brand">Linux · Bases &amp; Services</span>
+      </nav>
+      <header class="command-hero">
+        <span class="command-kicker" id="command-kicker"></span>
+        <h1 id="command-title">Commandes Linux</h1>
+        <p class="command-intro" id="command-intro"></p>
+        <div class="command-hints">
+          <span>Recherche : touche /</span><span>Options composables</span
+          ><span>Exemples copiables</span>
+        </div>
+      </header>
+      <section class="command-toolbar" aria-label="Recherche et filtres">
+        <label class="search-wrap"
+          ><span hidden>Rechercher une commande</span
+          ><input
+            id="command-search"
+            type="search"
+            placeholder="Rechercher une commande, une option ou un objectif…"
+            autocomplete="off"
+        /></label>
+        <div class="filter-row" id="command-filters" aria-label="Filtrer par thème"></div>
+      </section>
+      <div class="command-workspace">
+        <aside class="command-index">
+          <div class="command-index__header">
+            <strong>Commandes essentielles</strong><span id="command-count"></span>
+          </div>
+          <div class="command-list" id="command-list"></div>
+          <p class="command-empty" id="command-empty" hidden>Aucun résultat.</p>
+        </aside>
+        <article class="command-detail" id="command-detail" aria-live="polite"></article>
+      </div>
+      <noscript
+        ><p class="command-error">
+          JavaScript doit être activé pour utiliser cet explorateur.
+        </p></noscript
+      >
+    </main>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 ---
-title: Gestion du stockage
+title: 01. Gestion du stockage
 description: Comprendre LVM, les systèmes de fichiers et les montages persistants.
 ---
 

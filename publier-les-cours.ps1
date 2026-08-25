@@ -70,7 +70,7 @@ if (Test-Path -LiteralPath $stageRoot) {
   Remove-Item -LiteralPath $stageRoot -Recurse -Force
 }
 
-Write-Host "1/5 - Préparation de la structure du site..."
+Write-Host "1/6 - Préparation de la structure du site..."
 Copy-MirroredDirectory -Source $staticRoot -Destination $stageRoot
 
 $courseMappings = @(
@@ -78,38 +78,65 @@ $courseMappings = @(
   @{ Source = "1 - Gestion du stockage\1.1 Partitionnement natif et LVM\Cours.md"; Destination = "01-stockage\01-partitionnement-lvm.md" },
   @{ Source = "1 - Gestion du stockage\1.2 Systemes de fichiers\Cours.md"; Destination = "01-stockage\02-systemes-de-fichiers.md" },
   @{ Source = "1 - Gestion du stockage\TP.md"; Destination = "01-stockage\tp\01-stockage.md" },
+  @{ Source = "1 - Gestion du stockage\Correction.md"; Destination = "01-stockage\tp\01-stockage-correction.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.1 Demarrage du systeme\Cours.md"; Destination = "02-administration-systeme\01-demarrage.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.2 Information sur le materiel\Cours.md"; Destination = "02-administration-systeme\02-materiel.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.3 Modules noyau et pilotes\Cours.md"; Destination = "02-administration-systeme\03-modules-noyau.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.4 Gestion des processus\Cours.md"; Destination = "02-administration-systeme\04-processus.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.4 Gestion des processus\TP.md"; Destination = "02-administration-systeme\tp\04-processus.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.4 Gestion des processus\Correction.md"; Destination = "02-administration-systeme\tp\04-processus-correction.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.5 Gestion des services (systemd)\Cours.md"; Destination = "02-administration-systeme\05-systemd.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.5 Gestion des services (systemd)\TP.md"; Destination = "02-administration-systeme\tp\05-systemd.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.5 Gestion des services (systemd)\Correction.md"; Destination = "02-administration-systeme\tp\05-systemd-correction.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.6 Journalisation et logs\Cours.md"; Destination = "02-administration-systeme\06-journalisation.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.6 Journalisation et logs\TP.md"; Destination = "02-administration-systeme\tp\06-journalisation.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.6 Journalisation et logs\Correction.md"; Destination = "02-administration-systeme\tp\06-journalisation-correction.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.7 Observation des performances\Cours.md"; Destination = "02-administration-systeme\07-performances.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.7 Observation des performances\TP.md"; Destination = "02-administration-systeme\tp\07-performances.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.7 Observation des performances\Correction.md"; Destination = "02-administration-systeme\tp\07-performances-correction.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.8 Taches planifiees\Cours.md"; Destination = "02-administration-systeme\08-taches-planifiees.md" },
   @{ Source = "2 - Administration systeme - l'interieur du systeme\2.8 Taches planifiees\TP.md"; Destination = "02-administration-systeme\tp\08-taches-planifiees.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.8 Taches planifiees\Correction.md"; Destination = "02-administration-systeme\tp\08-taches-planifiees-correction.md" },
+  @{ Source = "2 - Administration systeme - l'interieur du systeme\2.8 Taches planifiees\Demo-formateur.md"; Destination = "Ressources\demo-formateur-taches-planifiees.md" },
   @{ Source = "3 - Service DNS (BIND9)\Cours.md"; Destination = "03-dns-bind9\cours.md" },
   @{ Source = "3 - Service DNS (BIND9)\TP.md"; Destination = "03-dns-bind9\tp\03-dns.md" },
+  @{ Source = "3 - Service DNS (BIND9)\Correction.md"; Destination = "03-dns-bind9\tp\03-dns-correction.md" },
   @{ Source = "4 - Service Web - pile LAMP\Cours.md"; Destination = "04-serveur-web-lamp\cours.md" },
   @{ Source = "4 - Service Web - pile LAMP\TP.md"; Destination = "04-serveur-web-lamp\tp\04-lamp.md" },
+  @{ Source = "4 - Service Web - pile LAMP\Correction.md"; Destination = "04-serveur-web-lamp\tp\04-lamp-correction.md" },
   @{ Source = "5 - Pare-feu nftables\Cours.md"; Destination = "05-pare-feu-nftables\cours.md" },
   @{ Source = "5 - Pare-feu nftables\TP.md"; Destination = "05-pare-feu-nftables\tp\05-nftables.md" },
+  @{ Source = "5 - Pare-feu nftables\Correction.md"; Destination = "05-pare-feu-nftables\tp\05-nftables-correction.md" },
   @{ Source = "6 - Service mail - Postfix Dovecot Rainloop\Cours.md"; Destination = "06-messagerie\cours.md" },
   @{ Source = "6 - Service mail - Postfix Dovecot Rainloop\TP.md"; Destination = "06-messagerie\tp\06-messagerie.md" },
+  @{ Source = "6 - Service mail - Postfix Dovecot Rainloop\Correction.md"; Destination = "06-messagerie\tp\06-messagerie-correction.md" },
   @{ Source = "guide-formateur.md"; Destination = "Ressources\guide-formateur.md" },
+  @{ Source = "Ressources\validation-des-tp.md"; Destination = "Ressources\validation-des-tp.md" },
   @{ Source = "Ressources\fiche-diagnostic-tssr.md"; Destination = "Ressources\fiche-diagnostic-tssr.md" }
 )
 
-Write-Host "2/5 - Copie des cours, TP et ressources publiques..."
+Write-Host "2/6 - Copie des cours, TP et ressources sélectionnées..."
 foreach ($mapping in $courseMappings) {
   Copy-PublishedFile -SourceRelative $mapping.Source -DestinationRelative $mapping.Destination
 }
 Copy-MirroredDirectory -Source (Join-Path $sourceRoot "assets") -Destination $stageImages
 
-Write-Host "3/5 - Adaptation des liens et ajout des téléchargements..."
+Write-Host "3/6 - Masquage des notes privées et des corrections non publiées..."
+$hiddenDocuments = 0
+Get-ChildItem -LiteralPath $stageRoot -Recurse -File -Filter "*.md" | ForEach-Object {
+  $documentContent = [IO.File]::ReadAllText($_.FullName)
+  $isCorrection = $_.Name -like "*correction*.md"
+  $isExplicitlyPublic = $documentContent -match '(?m)^publier:\s*true\s*$'
+  $isExplicitlyPrivate = $documentContent -match '(?m)^publier:\s*false\s*$'
+
+  if ($isExplicitlyPrivate -or ($isCorrection -and -not $isExplicitlyPublic)) {
+    [IO.File]::Delete($_.FullName)
+    $hiddenDocuments++
+  }
+}
+Write-Host "$hiddenDocuments document(s) conservé(s) uniquement dans le coffre."
+
+Write-Host "4/6 - Adaptation des liens et ajout des téléchargements..."
 Get-ChildItem -LiteralPath $stageRoot -Recurse -File -Filter "*.md" | ForEach-Object {
   $markdownFile = $_
   $original = [IO.File]::ReadAllText($markdownFile.FullName)
@@ -121,13 +148,19 @@ Get-ChildItem -LiteralPath $stageRoot -Recurse -File -Filter "*.md" | ForEach-Ob
     'Ressources/images/'
   )
 
-  $updated = $updated.Replace('../guide-formateur.md', 'Ressources/guide-formateur')
   $updated = $updated.Replace('../Ressources/fiche-diagnostic-tssr.md', 'Ressources/fiche-diagnostic-tssr')
 
+  $correctionFileName = "$([IO.Path]::GetFileNameWithoutExtension($markdownFile.Name))-correction.md"
+  $correctionPath = Join-Path $markdownFile.DirectoryName $correctionFileName
+  $correctionReplacement = if (Test-Path -LiteralPath $correctionPath -PathType Leaf) {
+    "**Correction** : [consulter la correction]($correctionFileName)."
+  } else {
+    ''
+  }
   $updated = [regex]::Replace(
     $updated,
     '(?m)^\*\*Correction\*\*\s*:\s*voir\s+`Correction\.md`.*$',
-    '> [!NOTE] Correction formateur`n> La correction détaillée est conservée dans le coffre pédagogique.'
+    $correctionReplacement
   )
 
   $relativeMarkdownPath = [IO.Path]::GetRelativePath($stageRoot, $markdownFile.FullName).Replace("\", "/")
@@ -143,13 +176,13 @@ Get-ChildItem -LiteralPath $stageRoot -Recurse -File -Filter "*.md" | ForEach-Ob
   }
 }
 
-Write-Host "4/5 - Synchronisation du contenu Quartz..."
+Write-Host "5/6 - Synchronisation du contenu Quartz..."
 Copy-MirroredDirectory -Source $stageRoot -Destination $destinationContent
 Remove-Item -LiteralPath $stageRoot -Recurse -Force
 
 Push-Location $projectRoot
 try {
-  Write-Host "5/5 - Formatage et vérification du build Quartz..."
+  Write-Host "6/6 - Formatage et vérification du build Quartz..."
   & npx prettier content site-content quartz/styles/custom.scss --write
   if ($LASTEXITCODE -ne 0) {
     throw "Le formatage du contenu a échoué."

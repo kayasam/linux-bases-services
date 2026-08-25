@@ -1,13 +1,10 @@
-# Linux - Bases & Services
-
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/00-mise-en-place/commandes.html" target="_blank">Comprendre les commandes du laboratoire et composer leurs options</a>
+# Linux Administration : Bases + Services - s35 2026
 
 > [name=Samuel GUILLARD <sguillard@dawan.fr>] basé sur les formations de Hughes BIGO, Bruno GUÉRIN, Bastien TRAVERSE, Antoine RAULT
 > [time=24 aout 2026]
 
 > [!NOTE] Fil conducteur pédagogique
-> Consulter le [guide formateur](Ressources/guide-formateur) et la [fiche de diagnostic TSSR](Ressources/fiche-diagnostic-tssr). Toute la semaine, le même laboratoire est enrichi puis dépanné couche par couche.
+> Utiliser la [fiche de diagnostic TSSR](Ressources/fiche-diagnostic-tssr). Toute la semaine, le même laboratoire est enrichi puis dépanné couche par couche.
 
 ![Architecture du laboratoire](Ressources/images/architecture-laboratoire.svg)
 

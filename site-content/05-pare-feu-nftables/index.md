@@ -1,5 +1,5 @@
 ---
-title: Pare-feu nftables
+title: 05. Pare-feu nftables
 description: Construire, tester et rendre persistant un filtrage réseau Linux.
 ---
 

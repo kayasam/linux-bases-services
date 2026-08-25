@@ -1,5 +1,5 @@
 ---
-title: Administration du système
+title: 02. Administration du système
 description: Observer le fonctionnement interne d'un serveur Linux et le diagnostiquer.
 ---
 
@@ -18,9 +18,6 @@ description: Observer le fonctionnement interne d'un serveur Linux et le diagnos
 > - [Observation des performances](02-administration-systeme/07-performances)
 > - [Tâches planifiées](02-administration-systeme/08-taches-planifiees)
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes des huit sous-chapitres et composer leurs options</a>
-
 > [!TIP] Travaux pratiques
 >
 > - [Processus](02-administration-systeme/tp/04-processus)
@@ -28,6 +25,3 @@ description: Observer le fonctionnement interne d'un serveur Linux et le diagnos
 > - [Journalisation](02-administration-systeme/tp/06-journalisation)
 > - [Performances](02-administration-systeme/tp/07-performances)
 > - [Tâches planifiées](02-administration-systeme/tp/08-taches-planifiees)
-
-> [!SUCCESS] Évaluation du chapitre
-> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/quiz.html" target="_blank">Faire le quiz interactif — 20 questions</a>

@@ -1,8 +1,5 @@
 # 2.6 Journalisation et logs (dont logs noyau)
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes de journalisation et leurs filtres</a>
-
 **Objectifs** : savoir où chercher quand quelque chose ne va pas — journal centralisé systemd, messages noyau, fichiers texte classiques — et filtrer efficacement chaque source.
 
 ![Méthode de diagnostic TSSR](Ressources/images/diagnostic-tssr.svg)
@@ -76,7 +73,7 @@ journalctl --facility help                       # Valeurs reconnues par cette v
 ```
 
 > [!NOTE] Deux écritures valides
-> Les options longues GNU acceptent ici les deux formes : `--facility auth` et `--facility=auth`. Le cours utilise la forme avec une espace pour améliorer la lisibilité des exemples.
+> Les options longues acceptent ici les deux formes : `--facility auth` et `--facility=auth`. Le cours utilise la forme avec une espace pour améliorer la lisibilité des exemples.
 
 | Code | Facility   | Origine ou usage habituel                                      |
 | ---- | ---------- | -------------------------------------------------------------- |
@@ -92,10 +89,10 @@ journalctl --facility help                       # Valeurs reconnues par cette v
 | 9    | `cron`     | Ordonnanceurs cron et at                                       |
 | 10   | `authpriv` | Authentification contenant potentiellement des données privées |
 | 11   | `ftp`      | Service FTP                                                    |
-| 12   | —          | Réservé                                                        |
-| 13   | —          | Réservé                                                        |
-| 14   | —          | Réservé                                                        |
-| 15   | —          | Réservé                                                        |
+| 12   | —          | Valeur réservée                                                |
+| 13   | —          | Valeur réservée                                                |
+| 14   | —          | Valeur réservée                                                |
+| 15   | —          | Valeur réservée                                                |
 | 16   | `local0`   | Usage local défini par l'administrateur ou l'application       |
 | 17   | `local1`   | Usage local défini par l'administrateur ou l'application       |
 | 18   | `local2`   | Usage local défini par l'administrateur ou l'application       |
@@ -105,7 +102,7 @@ journalctl --facility help                       # Valeurs reconnues par cette v
 | 22   | `local6`   | Usage local défini par l'administrateur ou l'application       |
 | 23   | `local7`   | Usage local défini par l'administrateur ou l'application       |
 
-Les facilities `local0` à `local7` n'ont pas de sens imposé : une entreprise peut, par exemple, réserver `local0` à une application métier et configurer rsyslog pour l'envoyer dans un fichier ou vers un collecteur distant dédié.
+Les facilities `local0` à `local7` n'ont pas de sens imposé. Une entreprise peut, par exemple, réserver `local0` à une application métier et l'acheminer vers un fichier ou un collecteur distant dédié avec rsyslog.
 
 > [!IMPORTANT] Limite du filtre
 > Une facility n'est ni une unité systemd ni le nom d'un programme. Certains messages écrits directement dans journald ne possèdent pas le champ `SYSLOG_FACILITY` ; ils ne ressortiront donc pas avec `--facility`. Pour cibler précisément un service, utiliser plutôt `-u`, `_COMM=`, `_EXE=` ou `SYSLOG_IDENTIFIER=` selon le contexte.
@@ -131,6 +128,47 @@ Moyen mnémotechnique : `dmesg` = **d**iagnostic **mesg**ages (du noyau) ; `-k` 
 
 ---
 
+### Configuration et données : comprendre les chemins avec le FHS
+
+Le **Filesystem Hierarchy Standard (FHS)** sépare la configuration statique propre à la machine, les données temporaires du démarrage courant et les données variables conservées. Cette logique explique les chemins utilisés par journald.
+
+![Journald dans le FHS : fichiers de configuration, stockage volatil et stockage persistant](Ressources/images/journald-fhs.svg)
+
+> [!TIP] Lecture du schéma
+> Lire de haut en bas : les fichiers de configuration sont fusionnés selon leur priorité, `systemd-journald` applique le résultat, puis `Storage=` oriente les entrées vers `/run/log/journal` ou `/var/log/journal`. `journalctl` consulte ces fichiers binaires ; les fichiers texte `/var/log/*.log` constituent une sortie distincte.
+
+| Chemin                                          | Rôle FHS                                                | Contenu lié aux journaux                                               | Persistance                               |
+| ----------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------- |
+| `/etc/systemd/journald.conf`                    | `/etc` : configuration locale propre à l'hôte           | Fichier principal de configuration de `systemd-journald`               | Oui                                       |
+| `/etc/systemd/journald.conf.d/*.conf`           | `/etc` : surcharges de l'administrateur                 | Fragments locaux recommandés                                           | Oui                                       |
+| `/usr/lib/systemd/journald.conf.d/*.conf`       | `/usr` : fichiers statiques fournis par la distribution | Paramètres installés par les paquets ; ne pas les modifier directement | Oui, mais remplacés lors des mises à jour |
+| `/usr/local/lib/systemd/journald.conf.d/*.conf` | `/usr/local` : installation locale de logiciels         | Paramètres fournis par un logiciel installé localement                 | Oui                                       |
+| `/run/systemd/journald.conf.d/*.conf`           | `/run` : état et configuration d'exécution              | Surcharges temporaires valables jusqu'au redémarrage                   | Non                                       |
+| `/run/log/journal/<machine-id>/`                | `/run` : données du démarrage courant                   | Journal binaire **volatile**                                           | Non                                       |
+| `/var/log/journal/<machine-id>/`                | `/var/log` : journaux variables                         | Journal binaire **persistant**                                         | Oui                                       |
+| `/var/log/*.log` et sous-répertoires            | `/var/log` : journaux texte                             | Fichiers produits directement ou exportés par rsyslog                  | Oui                                       |
+
+`<machine-id>` correspond généralement au contenu de `/etc/machine-id`. Dans le répertoire, on rencontre notamment :
+
+- `system.journal` : journal système actif ;
+- `user-UID.journal` : journal d'un utilisateur lorsque la séparation par UID est active ;
+- `system@….journal` : fichier archivé après rotation ;
+- `*.journal~` : fichier non terminé ou considéré hors ligne après un arrêt incorrect.
+
+> [!WARNING] Les fichiers `.journal` sont binaires
+> Ne pas les ouvrir ou les modifier avec un éditeur de texte. Utiliser `journalctl`, `journalctl --file`, `journalctl --directory` ou `journalctl --verify`. Les fichiers texte de `/var/log/` relèvent souvent de rsyslog ou directement de l'application : ils complètent le journal binaire, mais ne sont pas le même stockage.
+
+Commandes pour identifier le mode réellement utilisé :
+
+```bash
+cat /etc/machine-id
+sudo ls -lah /run/log/journal /var/log/journal 2>/dev/null
+journalctl --header | head -n 20
+journalctl --disk-usage
+```
+
+---
+
 ### Les fichiers classiques de `/var/log/`
 
 | Fichier             | Contenu                                                   |
@@ -151,6 +189,108 @@ sudo grep "error" /var/log/syslog   # Recherche d'un mot-clé
 > [!NOTE]
 > Ces fichiers grossiraient indéfiniment sans **logrotate** (`/etc/logrotate.conf` et `/etc/logrotate.d/`), qui les compresse puis les supprime après un délai configuré. Journald a son propre mécanisme équivalent (quotas de taille dans `/etc/systemd/journald.conf`).
 
+---
+
+### Configurer systemd-journald dans `/etc`
+
+`journalctl` est la **commande de consultation**. Le composant qui collecte et stocke les messages est le démon **`systemd-journald`**. C'est donc sa configuration que l'administrateur modifie dans `/etc`.
+
+Le fichier principal est `/etc/systemd/journald.conf`, mais un **drop-in** local est préférable : il isole les choix de l'administrateur, facilite l'audit et évite de recopier tout le fichier principal.
+
+#### Ordre de priorité des fichiers
+
+1. les valeurs intégrées à systemd constituent les valeurs par défaut ;
+2. le fichier principal `/etc/systemd/journald.conf` peut les remplacer ;
+3. les fragments `journald.conf.d/*.conf` sont ensuite fusionnés par ordre lexicographique ;
+4. à nom identique, l'ordre de priorité est `/etc` > `/run` > `/usr/local/lib` > `/usr/lib`.
+
+Les paquets utilisent `/usr/lib/systemd/journald.conf.d/`. L'administrateur utilise `/etc/systemd/journald.conf.d/`. Un fichier local nommé par exemple `60-tssr.conf` est plus lisible qu'une modification cachée dans un fichier fourni par la distribution.
+
+#### Paramètres importants
+
+Toutes les directives se placent dans la section `[Journal]`.
+
+| Paramètre               | Valeurs ou exemple                       | Effet                                                       |
+| ----------------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `Storage=`              | `auto`, `persistent`, `volatile`, `none` | Choisit le stockage persistant, volatil ou désactivé        |
+| `Compress=`             | `yes` ou `no`                            | Compresse les objets suffisamment grands                    |
+| `SystemMaxUse=`         | `500M`, `2G`                             | Limite globale sous `/var/log/journal`                      |
+| `SystemKeepFree=`       | `1G`                                     | Espace disque que journald doit laisser libre               |
+| `SystemMaxFileSize=`    | `128M`                                   | Taille maximale d'un fichier persistant avant rotation      |
+| `RuntimeMaxUse=`        | `200M`                                   | Limite globale sous `/run/log/journal`                      |
+| `MaxRetentionSec=`      | `30day`                                  | Durée maximale de conservation ; `0` désactive cette limite |
+| `MaxFileSec=`           | `1month`                                 | Durée maximale couverte par un seul fichier avant rotation  |
+| `RateLimitIntervalSec=` | `30s`                                    | Fenêtre temporelle de limitation des messages               |
+| `RateLimitBurst=`       | `10000`                                  | Nombre de messages autorisés par service dans cette fenêtre |
+| `ForwardToSyslog=`      | `yes` ou `no`                            | Transmet aussi les messages à un démon syslog compatible    |
+| `ForwardToKMsg=`        | `yes` ou `no`                            | Transmet vers le tampon de messages du noyau                |
+| `ForwardToConsole=`     | `yes` ou `no`                            | Transmet vers la console système ; très bavard              |
+| `SplitMode=`            | `uid` ou `none`                          | Sépare ou non les journaux persistants des utilisateurs     |
+
+> [!NOTE] `System*` ou `Runtime*` ?
+> Les paramètres `System…` concernent `/var/log/journal`, donc le stockage persistant. Les paramètres `Runtime…` concernent `/run/log/journal`, donc le stockage volatil. `SystemMaxUse=` limite l'espace que journald peut encore consommer ; il ne garantit pas que l'occupation redescende instantanément sous cette valeur, notamment parce que le fichier actif n'est pas supprimé.
+
+#### Exemple sûr avec un drop-in
+
+```bash
+# 1. Créer le répertoire réservé aux réglages locaux
+sudo install -d -m 0755 /etc/systemd/journald.conf.d
+
+# 2. Éditer un fichier local clairement identifié
+sudoedit /etc/systemd/journald.conf.d/60-tssr.conf
+```
+
+Contenu proposé pour un serveur de laboratoire :
+
+```ini
+[Journal]
+Storage=persistent
+Compress=yes
+SystemMaxUse=500M
+SystemKeepFree=1G
+MaxRetentionSec=30day
+RateLimitIntervalSec=30s
+RateLimitBurst=10000
+```
+
+#### Vérifier puis appliquer
+
+```bash
+# Afficher la configuration fusionnée et sa provenance
+systemd-analyze cat-config systemd/journald.conf
+
+# Relancer le démon pour relire la configuration
+sudo systemctl restart systemd-journald
+sudo systemctl status systemd-journald --no-pager
+sudo journalctl -u systemd-journald -b -p warning --no-pager
+
+# Basculer les événements du début de boot vers le stockage persistant
+sudo journalctl --flush
+
+# Contrôler le stockage et l'intégrité des fichiers
+journalctl --disk-usage
+sudo journalctl --verify
+sudo ls -lah /var/log/journal/"$(cat /etc/machine-id)"/
+```
+
+La commande `systemctl daemon-reload` n'est pas nécessaire ici : elle sert à faire relire les **unités systemd**, pas les fichiers de configuration propres au service. C'est le redémarrage de `systemd-journald` qui lui fait relire `journald.conf`.
+
+> [!WARNING] Effet de `Storage=none`
+> Cette valeur supprime le stockage des messages reçus. Les éventuels transferts vers la console, le noyau ou syslog peuvent continuer selon les autres options, mais `journalctl` ne disposera plus de ces entrées. Ne pas l'utiliser comme simple moyen de gagner de l'espace.
+
+#### Rotation et nettoyage ponctuel
+
+```bash
+sudo journalctl --rotate                 # Ferme le fichier actif et en crée un nouveau
+sudo journalctl --vacuum-size=500M       # Supprime des archives jusqu'à la taille visée
+sudo journalctl --vacuum-time=30d        # Supprime les archives plus anciennes
+journalctl --disk-usage                  # Mesure après nettoyage
+```
+
+`--vacuum-*` agit sur les fichiers **archivés**, pas sur le fichier actuellement actif. Enchaîner `--rotate` puis `--vacuum-*` rend donc le nettoyage plus efficace et plus prévisible.
+
+---
+
 ### Exploiter les champs structurés de journald
 
 Contrairement à un simple fichier texte, une entrée journald possède des champs : unité, PID, UID, exécutable, priorité, boot, etc.
@@ -169,14 +309,15 @@ sudo journalctl -o json-pretty -n 1
 sudo journalctl -u bind9 --since "10 minutes ago" --no-pager -o short-iso
 ```
 
-### Persistance et occupation disque
+### Contrôler la persistance et l'occupation disque
 
 Selon la distribution, le journal peut être volatil (`/run/log/journal`, perdu au reboot) ou persistant (`/var/log/journal`).
 
 ```bash
 journalctl --list-boots
 journalctl --disk-usage
-sudo journalctl --vacuum-time=30d       # politique ponctuelle, à employer consciemment
+systemd-analyze cat-config systemd/journald.conf
+sudo journalctl --verify
 ```
 
 > [!WARNING] Données sensibles
@@ -188,4 +329,14 @@ sudo journalctl --vacuum-time=30d       # politique ponctuelle, à employer cons
 > - `journalctl` centralise noyau + services + authentification ; `dmesg`/`journalctl -k` isole le noyau.
 > - Priorités : plus le chiffre est bas, plus c'est grave (0 = système inutilisable, 7 = debug).
 > - Facilities : elles classent l'origine fonctionnelle (`auth`, `mail`, `cron`, `daemon`...), indépendamment de la gravité.
+> - `/etc` configure, `/run/log/journal` stocke temporairement et `/var/log/journal` conserve entre les redémarrages.
+> - Préférer un drop-in `/etc/systemd/journald.conf.d/*.conf`, puis vérifier la configuration fusionnée avant et après redémarrage du service.
 > - `/var/log/` reste incontournable pour les programmes non intégrés à systemd — les deux sources se complètent, elles ne se remplacent pas totalement.
+
+---
+
+### Références officielles
+
+- [journald.conf — configuration, précédence et paramètres](https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html)
+- [journalctl — lecture, filtres et vérification](https://www.freedesktop.org/software/systemd/man/latest/journalctl.html)
+- [Filesystem Hierarchy Standard 3.0](https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html)

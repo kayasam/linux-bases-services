@@ -1,8 +1,5 @@
 # 2.2 Information sur le matériel
 
-> [!TIP] Commandes interactives
-> <a href="https://kayasam.github.io/linux-bases-services/02-administration-systeme/commandes.html" target="_blank">Explorer les commandes d'inventaire matériel</a>
-
 **Objectifs** : savoir identifier rapidement le matériel d'une machine Linux (CPU, PCI, USB, RAM, distribution) sans avoir à ouvrir le boîtier.
 
 > [!NOTE] Compétence TSSR

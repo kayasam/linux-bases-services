@@ -1,14 +1,14 @@
 ---
-title: Linux - Bases & Services
+title: Linux — Bases & Services
 description: Formation pratique d'administration Linux et de mise en œuvre de services pour TSSR.
 ---
 
-# Linux - Bases & Services
+# Formation — Linux : Bases & Services
 
 <section class="network-hero">
   <div class="network-hero__copy">
     <span class="network-kicker">Formation TSSR · laboratoire fil rouge</span>
-    <h2>Linux - Bases &amp; Services</h2>
+    <h2>Administrer Linux.<br>Démontrer chaque diagnostic.</h2>
     <p>Du stockage aux services réseau : cours détaillés, schémas SVG, travaux pratiques et pannes guidées pour apprendre à observer, expliquer et rétablir.</p>
     <div class="network-hero__actions">
       <a class="network-button network-button--primary" href="./00-mise-en-place/">Commencer le parcours <span aria-hidden="true">→</span></a>
@@ -17,7 +17,6 @@ description: Formation pratique d'administration Linux et de mise en œuvre de s
     <div class="network-stats" aria-label="Contenu de la formation">
       <span><strong>15</strong> cours</span>
       <span><strong>10</strong> TP</span>
-      <span><strong>7</strong> quiz</span>
       <span><strong>16</strong> schémas SVG</span>
     </div>
   </div>
@@ -66,10 +65,6 @@ description: Formation pratique d'administration Linux et de mise en œuvre de s
   <a class="experience-card experience-card--game" href="./Ressources/fiche-diagnostic-tssr">
     <span class="experience-card__icon" aria-hidden="true">⌕</span><span class="experience-card__eyebrow">Méthode terrain</span>
     <strong>Diagnostiquer sans deviner</strong><span>Partir du symptôme, vérifier chaque couche et produire une preuve.</span><b>Ouvrir la fiche →</b>
-  </a>
-  <a class="experience-card experience-card--schema" href="./Ressources/guide-formateur">
-    <span class="experience-card__icon" aria-hidden="true">◎</span><span class="experience-card__eyebrow">Parcours pédagogique</span>
-    <strong>Exploiter le fil rouge</strong><span>Prédire, observer, provoquer une panne, rétablir et restituer.</span><b>Consulter le guide →</b>
   </a>
   <a class="experience-card experience-card--revision" href="./01-stockage/tp/01-stockage">
     <span class="experience-card__icon" aria-hidden="true">>_</span><span class="experience-card__eyebrow">Premier laboratoire</span>

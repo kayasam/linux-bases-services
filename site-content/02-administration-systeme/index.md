@@ -1,5 +1,5 @@
 ---
-title: Administration du système
+title: 02. Administration du système
 description: Observer le fonctionnement interne d'un serveur Linux et le diagnostiquer.
 ---
 

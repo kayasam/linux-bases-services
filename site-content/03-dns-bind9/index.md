@@ -1,5 +1,5 @@
 ---
-title: Service DNS avec BIND9
+title: 03. Service DNS avec BIND9
 description: Installer une zone DNS locale et diagnostiquer la résolution de noms.
 ---
 
