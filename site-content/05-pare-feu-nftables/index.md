@@ -5,6 +5,11 @@ description: Construire, tester et rendre persistant un filtrage réseau Linux.
 
 # 05 — Pare-feu nftables
 
+> [!TIP] Révision interactive
+>
+> - [Quiz du chapitre — 20 questions](05-pare-feu-nftables/quiz)
+> - [Explorateur interactif des commandes](05-pare-feu-nftables/commandes)
+
 ![Parcours d'un paquet](Ressources/images/parcours-nftables.svg)
 
 > [!TIP] Ressources du chapitre

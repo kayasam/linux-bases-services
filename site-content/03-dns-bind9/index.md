@@ -5,6 +5,11 @@ description: Installer une zone DNS locale et diagnostiquer la résolution de no
 
 # 03 — Service DNS avec BIND9
 
+> [!TIP] Révision interactive
+>
+> - [Quiz du chapitre — 20 questions](03-dns-bind9/quiz)
+> - [Explorateur interactif des commandes](03-dns-bind9/commandes)
+
 ![Résolution DNS locale et transfert](Ressources/images/resolution-dns.svg)
 
 > [!TIP] Ressources du chapitre

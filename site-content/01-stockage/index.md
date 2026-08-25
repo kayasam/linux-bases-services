@@ -5,6 +5,11 @@ description: Comprendre LVM, les systèmes de fichiers et les montages persistan
 
 # 01 — Gestion du stockage
 
+> [!TIP] Révision interactive
+>
+> - [Quiz du chapitre — 20 questions](01-stockage/quiz)
+> - [Explorateur interactif des commandes](01-stockage/commandes)
+
 ![Chaîne de stockage LVM](Ressources/images/chaine-stockage-lvm.svg)
 
 > [!TIP] Ressources du chapitre

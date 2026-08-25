@@ -5,6 +5,11 @@ description: Comprendre et mettre en œuvre une chaîne Postfix, Maildir et Dove
 
 # 06 — Service de messagerie
 
+> [!TIP] Révision interactive
+>
+> - [Quiz du chapitre — 20 questions](06-messagerie/quiz)
+> - [Explorateur interactif des commandes](06-messagerie/commandes)
+
 ![Chaîne de traitement d'un courrier](Ressources/images/chaine-mail.svg)
 
 > [!TIP] Ressources du chapitre

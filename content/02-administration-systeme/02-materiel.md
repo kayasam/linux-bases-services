@@ -1,5 +1,8 @@
 # 2.2 Information sur le matériel
 
+> [!TIP] Auto-évaluation
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-02-materiel)
+
 **Objectifs** : savoir identifier rapidement le matériel d'une machine Linux (CPU, PCI, USB, RAM, distribution) sans avoir à ouvrir le boîtier.
 
 > [!NOTE] Compétence TSSR

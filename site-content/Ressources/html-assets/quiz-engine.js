@@ -5,23 +5,30 @@
   const root = document.querySelector("[data-quiz]")
   if (!root) return
 
-  const quizId = root.dataset.quiz
+  const quizId = root.dataset.quiz || new URLSearchParams(window.location.search).get("quiz")
   const data = window.linuxQuizBanks && window.linuxQuizBanks[quizId]
   if (!data) {
     root.innerHTML = '<p class="quiz-error">Le quiz demandé ne peut pas être chargé.</p>'
     return
   }
 
-  if (!Array.isArray(data.questions) || data.questions.length !== 20) {
-    root.innerHTML = '<p class="quiz-error">Ce quiz doit contenir exactement 20 questions.</p>'
+  if (!Array.isArray(data.questions) || data.questions.length === 0) {
+    root.innerHTML = '<p class="quiz-error">Ce quiz ne contient aucune question exploitable.</p>'
     return
   }
+
+  const total = data.questions.length
+  const objective = Math.ceil(total * 0.8)
 
   document.title = data.title + " — Quiz Linux TSSR"
   document.getElementById("quiz-kicker").textContent = data.chapter
   document.getElementById("quiz-title").textContent = data.title
   document.getElementById("quiz-intro").textContent = data.intro
   document.getElementById("chapter-link").href = data.chapterLink
+  document.querySelector(".quiz-meta span:first-child").textContent = total + " questions"
+  document.querySelector(".quiz-status > span:last-child").textContent =
+    "Objectif : " + objective + "/" + total
+  document.getElementById("best-score").nextElementSibling.textContent = "meilleur score /" + total
 
   const panel = document.getElementById("question-panel")
   const result = document.getElementById("result-panel")
@@ -54,8 +61,8 @@
     feedback.replaceChildren()
 
     const question = data.questions[order[index]]
-    currentEl.textContent = "Question " + (index + 1) + " sur 20"
-    progress.style.width = ((index + 1) / 20) * 100 + "%"
+    currentEl.textContent = "Question " + (index + 1) + " sur " + total
+    progress.style.width = ((index + 1) / total) * 100 + "%"
     theme.textContent = question.theme
     title.textContent = question.question
     answers.replaceChildren()
@@ -101,15 +108,15 @@
   function showResult() {
     panel.classList.add("hidden")
     result.classList.add("visible")
-    const percent = Math.round((score / 20) * 100)
-    const wrong = 20 - score
+    const percent = Math.round((score / total) * 100)
+    const wrong = total - score
     let heading
     let message
-    if (score >= 17) {
+    if (percent >= 85) {
       heading = "Compétences maîtrisées"
       message =
         "Très bon résultat : les notions et la méthode de diagnostic sont solides. Passez au TP et justifiez vos vérifications par des preuves."
-    } else if (score >= 13) {
+    } else if (percent >= 65) {
       heading = "Acquis à consolider"
       message =
         "Le socle est présent. Relisez les explications des réponses manquées, puis refaites le quiz avant de passer au dépannage en autonomie."
@@ -119,7 +126,7 @@
         "Reprenez le cours et les commandes de vérification du chapitre. Cherchez à comprendre la couche observée plutôt qu'à mémoriser uniquement les commandes."
     }
 
-    document.getElementById("result-score").textContent = score + "/20"
+    document.getElementById("result-score").textContent = score + "/" + total
     document.getElementById("result-percent").textContent = percent + " %"
     document.getElementById("result-title").textContent = heading
     document.getElementById("result-message").textContent = message
@@ -157,7 +164,7 @@
 
   next.addEventListener("click", function () {
     if (!answered) return
-    if (index === 19) showResult()
+    if (index === total - 1) showResult()
     else {
       index += 1
       renderQuestion()
