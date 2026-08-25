@@ -212,6 +212,169 @@ a.network-button--ghost {
   box-shadow: 0 1rem 2rem rgb(7 29 54 / 22%);
 }
 
+.tux-console {
+  position: relative;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--secondary) 32%, var(--lightgray));
+  border-radius: 1.15rem;
+  background:
+    radial-gradient(circle at 50% 18%, rgb(255 255 255 / 86%), transparent 38%),
+    linear-gradient(145deg, #eef8ff, #e8ecff 58%, #f5f3ff);
+  box-shadow: 0 1rem 2rem rgb(7 29 54 / 18%);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.tux-console::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgb(22 138 173 / 7%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(22 138 173 / 7%) 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem;
+  content: "";
+  mask-image: linear-gradient(to bottom, #000, transparent 92%);
+}
+
+.tux-console > summary {
+  position: relative;
+  display: grid;
+  min-height: 22rem;
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+}
+
+.tux-console > summary::-webkit-details-marker {
+  display: none;
+}
+
+.tux-console > summary:focus-visible {
+  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--secondary) 65%, transparent);
+}
+
+.tux-mascot {
+  display: block;
+  width: 100%;
+  height: auto;
+  align-self: end;
+  transform-origin: 50% 100%;
+  transition: transform 220ms ease;
+}
+
+.tux-wing--right {
+  transform-box: fill-box;
+  transform-origin: 15% 70%;
+  transition: transform 220ms ease;
+}
+
+.tux-pupil {
+  transition: transform 180ms ease;
+}
+
+.tux-orbit {
+  transform-origin: 50% 50%;
+  animation: tux-orbit 12s linear infinite;
+}
+
+.tux-terminal {
+  transition: transform 220ms ease;
+}
+
+.tux-console:is(:hover, :focus-within) .tux-mascot {
+  transform: translateY(-0.25rem) rotate(-0.7deg);
+}
+
+.tux-console:is(:hover, :focus-within) .tux-wing--right {
+  transform: rotate(-22deg) translate(0.35rem, -0.4rem);
+}
+
+.tux-console:is(:hover, :focus-within) .tux-pupil {
+  transform: translate(5px, -2px);
+}
+
+.tux-console:is(:hover, :focus-within) .tux-terminal {
+  transform: translateY(-4px);
+}
+
+.tux-console__hint {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.8rem;
+  display: grid;
+  gap: 0.12rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 0.8rem;
+  color: #071d36;
+  background: rgb(255 255 255 / 76%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0.35rem 1rem rgb(7 29 54 / 10%);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.tux-console__hint small {
+  color: #48647d;
+  font-size: 0.64rem;
+}
+
+.tux-console__message {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.8rem 1rem 1rem;
+  border-top: 1px solid rgb(22 138 173 / 18%);
+  color: #dbeafe;
+  background: #071d36;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.tux-console__message code {
+  color: #a3e635;
+  background: transparent;
+  font-size: 0.74rem;
+}
+
+.tux-console__message span {
+  color: #cbd5e1;
+}
+
+.tux-console[open] .tux-wing--right {
+  animation: tux-wave 650ms ease-in-out 2;
+}
+
+@keyframes tux-wave {
+  0%,
+  100% {
+    transform: rotate(-22deg) translate(0.35rem, -0.4rem);
+  }
+  50% {
+    transform: rotate(-38deg) translate(0.5rem, -0.7rem);
+  }
+}
+
+@keyframes tux-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tux-orbit,
+  .tux-console[open] .tux-wing--right {
+    animation: none;
+  }
+
+  .tux-mascot,
+  .tux-wing--right,
+  .tux-pupil,
+  .tux-terminal {
+    transition: none;
+  }
+}
+
 .network-status {
   position: absolute;
   right: 0.75rem;
@@ -625,6 +788,19 @@ a.schema-card--featured {
   .network-hero__visual img {
     max-height: 15rem;
     aspect-ratio: 16 / 9;
+  }
+
+  .tux-console > summary {
+    min-height: 15rem;
+  }
+
+  .tux-console__hint {
+    top: 0.6rem;
+    left: 0.6rem;
+  }
+
+  .network-hero__visual > .network-status {
+    display: none;
   }
 
   .network-hero__actions,
