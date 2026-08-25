@@ -14,7 +14,7 @@ description: Préparer l'infrastructure Linux et comprendre le fil rouge de la f
 >
 > - [Ouvrir le cours](00-mise-en-place/cours)
 > - [Utiliser la fiche de diagnostic](Ressources/fiche-diagnostic-tssr)
-> - [Quiz du chapitre — 20 questions](00-mise-en-place/quiz)
-> - [Explorateur interactif des commandes](00-mise-en-place/commandes)
+> - [Quiz du chapitre — 20 questions](https://kayasam.github.io/linux-bases-services/00-mise-en-place/quiz.html)
+> - [Explorateur interactif des commandes](https://kayasam.github.io/linux-bases-services/00-mise-en-place/commandes.html)
 
 Le serveur de laboratoire est progressivement équipé de stockage LVM, de DNS, d'une pile Web, d'un pare-feu et d'une chaîne de messagerie. La même méthode de vérification est utilisée à chaque étape.

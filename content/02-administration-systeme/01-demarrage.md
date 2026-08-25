@@ -1,7 +1,7 @@
 # 2.1 Démarrage du système : du boot à la connexion
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-01-demarrage)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-01-demarrage)
 
 **Objectifs** : situer les grandes étapes entre l'allumage de la machine et l'invite de connexion, et comprendre le rôle de l'initramfs.
 

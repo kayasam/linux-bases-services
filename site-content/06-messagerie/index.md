@@ -7,8 +7,8 @@ description: Comprendre et mettre en œuvre une chaîne Postfix, Maildir et Dove
 
 > [!TIP] Révision interactive
 >
-> - [Quiz du chapitre — 20 questions](06-messagerie/quiz)
-> - [Explorateur interactif des commandes](06-messagerie/commandes)
+> - [Quiz du chapitre — 20 questions](https://kayasam.github.io/linux-bases-services/06-messagerie/quiz.html)
+> - [Explorateur interactif des commandes](https://kayasam.github.io/linux-bases-services/06-messagerie/commandes.html)
 
 ![Chaîne de traitement d'un courrier](Ressources/images/chaine-mail.svg)
 

@@ -7,8 +7,8 @@ description: Construire, tester et rendre persistant un filtrage réseau Linux.
 
 > [!TIP] Révision interactive
 >
-> - [Quiz du chapitre — 20 questions](05-pare-feu-nftables/quiz)
-> - [Explorateur interactif des commandes](05-pare-feu-nftables/commandes)
+> - [Quiz du chapitre — 20 questions](https://kayasam.github.io/linux-bases-services/05-pare-feu-nftables/quiz.html)
+> - [Explorateur interactif des commandes](https://kayasam.github.io/linux-bases-services/05-pare-feu-nftables/commandes.html)
 
 ![Parcours d'un paquet](Ressources/images/parcours-nftables.svg)
 

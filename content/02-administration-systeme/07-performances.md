@@ -1,7 +1,7 @@
 # 2.7 Observation des performances
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-07-performances)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-07-performances)
 
 **Objectifs** : savoir répondre à "pourquoi la machine est lente ?" en regardant CPU, mémoire et disque, avant de soupçonner le réseau ou l'application.
 

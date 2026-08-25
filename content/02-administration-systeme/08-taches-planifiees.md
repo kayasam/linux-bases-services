@@ -1,7 +1,7 @@
 # 2.8 Tâches planifiées
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-08-planification)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-08-planification)
 
 **Objectifs** : choisir entre cron (récurrent), at (une seule fois) et les timers systemd, et savoir écrire une expression cron sans erreur.
 

@@ -1,7 +1,7 @@
 # 2.6 Journalisation et logs (dont logs noyau)
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-06-journalisation)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-06-journalisation)
 
 **Objectifs** : savoir où chercher quand quelque chose ne va pas — journal centralisé systemd, messages noyau, fichiers texte classiques — et filtrer efficacement chaque source.
 

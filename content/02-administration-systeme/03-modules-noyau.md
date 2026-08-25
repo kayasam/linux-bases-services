@@ -1,7 +1,7 @@
 # 2.3 Modules noyau et pilotes
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-03-modules)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-03-modules)
 
 **Objectifs** : comprendre pourquoi le noyau Linux est modulaire, et savoir charger/décharger/paramétrer un module sans redémarrer.
 

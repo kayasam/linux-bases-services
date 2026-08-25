@@ -7,8 +7,8 @@ description: Installer une zone DNS locale et diagnostiquer la résolution de no
 
 > [!TIP] Révision interactive
 >
-> - [Quiz du chapitre — 20 questions](03-dns-bind9/quiz)
-> - [Explorateur interactif des commandes](03-dns-bind9/commandes)
+> - [Quiz du chapitre — 20 questions](https://kayasam.github.io/linux-bases-services/03-dns-bind9/quiz.html)
+> - [Explorateur interactif des commandes](https://kayasam.github.io/linux-bases-services/03-dns-bind9/commandes.html)
 
 ![Résolution DNS locale et transfert](Ressources/images/resolution-dns.svg)
 

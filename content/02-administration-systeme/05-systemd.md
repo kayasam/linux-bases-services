@@ -1,7 +1,7 @@
 # 2.5 Gestion des services (systemd)
 
 > [!TIP] Auto-évaluation
-> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz?quiz=02-05-systemd)
+> [Mini-quiz interactif — 10 questions](https://kayasam.github.io/linux-bases-services/02-administration-systeme/mini-quiz.html?quiz=02-05-systemd)
 
 **Objectifs** : comprendre ce qu'est une unité systemd, savoir démarrer/activer/diagnostiquer un service, et situer les services dans le processus de démarrage vu en 2.1.
 

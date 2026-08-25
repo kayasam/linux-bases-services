@@ -7,8 +7,8 @@ description: Publier une application PHP reliée à MariaDB derrière Apache.
 
 > [!TIP] Révision interactive
 >
-> - [Quiz du chapitre — 20 questions](04-serveur-web-lamp/quiz)
-> - [Explorateur interactif des commandes](04-serveur-web-lamp/commandes)
+> - [Quiz du chapitre — 20 questions](https://kayasam.github.io/linux-bases-services/04-serveur-web-lamp/quiz.html)
+> - [Explorateur interactif des commandes](https://kayasam.github.io/linux-bases-services/04-serveur-web-lamp/commandes.html)
 
 ![Trajet d'une requête LAMP](Ressources/images/pile-lamp.svg)
 
