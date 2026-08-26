@@ -40,13 +40,35 @@ systemctl status mariadb
 
 ---
 
+### Où vit chaque fichier
+
+Une pile LAMP éparpille ses fichiers dans quatre arborescences. Ce n'est pas du désordre : le **FHS** (_Filesystem Hierarchy Standard_) attribue à chaque répertoire une responsabilité, et savoir laquelle permet de deviner où chercher sans documentation.
+
+![Les fichiers d'une pile LAMP rangés selon le FHS](Ressources/images/fichiers-lamp-fhs.svg)
+
+> [!TIP] Lecture du schéma
+> Trois questions suffisent à situer n'importe quel fichier :
+>
+> 1. **Est-ce que je l'écris, ou est-ce qu'un programme l'écrit ?** Ce que j'administre va dans `/etc/` — et c'est ce qu'il faut sauvegarder. Ce qu'un programme produit va dans `/var/`.
+> 2. **Est-ce que ça survit à un redémarrage ?** Si non, c'est `/run/` : le PID d'Apache, le socket de MariaDB. Inutile d'y toucher, tout y est recréé au démarrage.
+> 3. **Est-ce que ça vient du paquet ?** Alors c'est `/usr/` — les modules compilés, les binaires. Toute modification y sera écrasée à la prochaine mise à jour `apt`.
+>
+> Corollaire pratique pour une sauvegarde : `/etc/` (la configuration), `/var/www/` (le contenu) et un export SQL suffisent à reconstruire le serveur. `/usr/` se réinstalle avec `apt`, `/run/` se recrée seul, et `/var/log/` ne se restaure pas.
+
+> [!IMPORTANT] Le piège de « localhost » en PHP
+> Dans `new mysqli("localhost", …)`, le mot `localhost` **n'est pas** une adresse : PHP le traduit par une connexion au socket Unix `/run/mysqld/mysqld.sock`. Écrire `127.0.0.1` à la place force une connexion **TCP**, qui échouera si MariaDB n'écoute pas sur le réseau — ce qui est précisément la configuration par défaut de Debian (`bind-address = 127.0.0.1`, et souvent aucune écoute du tout).
+>
+> Deux écritures qu'on croit équivalentes, deux chemins techniques différents. C'est une cause classique de « ça marche chez moi ».
+
+---
+
 ### Créer un virtual host
 
 Un _virtual host_ (hôte virtuel) est un bloc de configuration qui décrit **un site**. Plusieurs sites peuvent ainsi cohabiter sur la même machine, la même adresse IP et le même port.
 
 Créer `/etc/apache2/sites-available/fournil-web.conf` :
 
-```apache
+```apacheconf
 # Ce bloc ne traite que les requêtes arrivant sur le port 80 (HTTP).
 # L'étoile signifie « quelle que soit l'adresse IP locale d'arrivée ».
 <VirtualHost *:80>
@@ -415,16 +437,142 @@ Erreurs propres à TLS :
 >
 > - Un virtual host Apache = un couple `ServerName` + `DocumentRoot` : plusieurs sites cohabitent sur la même IP, départagés par l'en-tête `Host`. Sans correspondance, Apache sert le premier vhost chargé.
 > - Écrire un fichier dans `sites-available/` ne suffit pas : rien n'est actif tant que `a2ensite` n'a pas créé le lien dans `sites-enabled/`.
-> - PHP ne se connecte jamais directement au navigateur : il génère du HTML côté serveur, exécuté par Apache via `mod_php` — donc sous l'identité `www-data`.
+> - PHP ne se connecte jamais directement au navigateur : il génère du HTML côté serveur. Avec `mod_php`, c'est Apache lui-même qui l'exécute, donc sous l'identité `www-data` ; avec PHP-FPM, c'est un démon séparé qui peut avoir sa propre identité (voir le bonus en fin de chapitre).
 > - Une page blanche est un message d'erreur qu'on ne voit pas : `display_errors` est à `Off`, la réponse est dans l'error log du site.
 > - Un utilisateur MariaDB dédié, limité à sa base et à `localhost`, contient les dégâts si les identifiants de l'appli fuitent.
 > - Un certificat auto-signé chiffre aussi bien qu'un certificat commercial : ce qui lui manque est la preuve d'identité, pas la protection des données.
 
 ---
 
+### Bonus — passer de mod_php à PHP-FPM
+
+Jusqu'ici, PHP est un **module d'Apache** : l'interpréteur vit à l'intérieur du processus web, et le code s'exécute donc en `www-data`. C'est simple, et c'est ce qui rend concrète toute la section sur les permissions. Mais c'est aussi la limite du modèle.
+
+**PHP-FPM** (_FastCGI Process Manager_) déplace PHP dans un **démon séparé**. Apache ne l'exécute plus : il lui transmet les requêtes `.php` par un socket et récupère le HTML produit.
+
+|                       | mod_php                      | PHP-FPM                               |
+| --------------------- | ---------------------------- | ------------------------------------- |
+| Où s'exécute PHP      | dans le processus Apache     | dans un démon indépendant             |
+| MPM Apache imposé     | `prefork` (le plus gourmand) | `event` (le moderne)                  |
+| Identité d'exécution  | toujours `www-data`          | **un utilisateur par site**           |
+| Limites de ressources | globales                     | par pool (`pm.max_children`, mémoire) |
+| Autre serveur web     | Apache uniquement            | identique derrière nginx              |
+
+Le gain décisif est le deuxième : avec `mod_php`, **tous** les sites de la machine s'exécutent sous la même identité. Une faille sur le site A permet de lire le `index.php` du site B, donc son mot de passe MariaDB. Avec un pool FPM par site, la faille reste enfermée dans son périmètre.
+
+#### 1. Basculer le serveur
+
+```bash
+sudo apt install -y php-fpm
+
+sudo a2dismod php8.4 mpm_prefork      # retirer mod_php ET le MPM qu'il imposait
+sudo a2enmod mpm_event proxy_fcgi setenvif
+sudo a2enconf php8.4-fpm              # branche Apache sur le socket FPM
+
+sudo systemctl enable --now php8.4-fpm
+sudo systemctl restart apache2
+```
+
+L'ordre compte : `mod_php` est incompatible avec `mpm_event`, il faut donc le désactiver **avant** de changer de MPM. Vérifier ensuite que la bascule a bien eu lieu :
+
+```bash
+apache2ctl -M | grep -E 'mpm|proxy_fcgi'    # attendu : mpm_event, proxy_fcgi
+systemctl status php8.4-fpm
+ss -lx | grep php                            # le socket doit exister
+```
+
+#### 2. Créer un pool dédié au site
+
+Un _pool_ est un groupe de processus PHP avec sa propre identité et ses propres limites. Créer d'abord l'utilisateur système du site :
+
+```bash
+sudo adduser --system --group --no-create-home --shell /usr/sbin/nologin fournil-web
+```
+
+Puis `/etc/php/8.4/fpm/pool.d/fournil.conf` :
+
+```ini
+[fournil]
+; Identité sous laquelle le code PHP de CE site s'exécutera.
+user = fournil-web
+group = fournil-web
+
+; Socket propre au site : un pool = un socket.
+listen = /run/php/php8.4-fpm-fournil.sock
+listen.owner = www-data      ; Apache doit pouvoir écrire dans le socket
+listen.group = www-data
+listen.mode = 0660
+
+; Nombre de processus PHP, ajusté à la mémoire disponible.
+pm = dynamic
+pm.max_children = 10
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+
+; Réglages PHP propres à ce site, impossibles avec mod_php.
+php_admin_value[memory_limit] = 256M
+php_admin_flag[display_errors] = off
+```
+
+Puis indiquer au vhost d'utiliser **ce** socket plutôt que le socket global, en ajoutant dans `/etc/apache2/sites-available/fournil-web-ssl.conf` (et dans le vhost `:80` s'il sert encore du contenu) :
+
+```apache
+        # Toutes les requêtes .php de ce site partent vers le pool "fournil".
+        <FilesMatch \.php$>
+            SetHandler "proxy:unix:/run/php/php8.4-fpm-fournil.sock|fcgi://localhost"
+        </FilesMatch>
+```
+
+```bash
+sudo systemctl restart php8.4-fpm
+sudo apache2ctl configtest && sudo systemctl reload apache2
+```
+
+#### 3. Réajuster les permissions
+
+Le code n'est plus lu par `www-data` seul : **deux** identités y accèdent désormais. Apache (`www-data`) sert les fichiers statiques, PHP (`fournil-web`) exécute les `.php`.
+
+```bash
+sudo chown -R root:fournil-web /var/www/fournil-web
+sudo find /var/www/fournil-web -type d -exec chmod 0750 {} \;
+sudo find /var/www/fournil-web -type f -exec chmod 0640 {} \;
+sudo adduser www-data fournil-web        # Apache rejoint le groupe du site
+sudo systemctl restart apache2
+```
+
+`root` reste propriétaire — ni Apache ni PHP ne peuvent réécrire le code. Le groupe `fournil-web` donne la lecture au pool PHP ; `www-data`, membre secondaire de ce groupe, peut servir les fichiers statiques. Un second site aura son propre groupe : son pool ne pourra rien lire chez le premier, ce qui est précisément l'isolation recherchée.
+
+#### 4. Le prouver
+
+Créer `/var/www/fournil-web/qui.php` :
+
+```php
+<?php
+echo "PHP s'exécute en tant que : " . trim(shell_exec('id -un'));
+```
+
+Avant la bascule la page affiche `www-data` ; après, elle affiche `fournil-web`. C'est la démonstration la plus directe de ce qui vient de changer.
+
+```bash
+sudo rm /var/www/fournil-web/qui.php    # à retirer comme info.php
+```
+
+> [!WARNING] Deux pièges classiques de la migration
+> **Le `php.ini` n'est plus le même fichier.** `mod_php` lit `/etc/php/8.4/apache2/php.ini`, FPM lit `/etc/php/8.4/fpm/php.ini`. Modifier l'ancien après la bascule ne produit plus aucun effet — et rien ne le signale. `phpinfo()` affiche le chemin réellement chargé (_Loaded Configuration File_) : c'est la seule preuve fiable.
+>
+> **Les directives `php_value` / `php_admin_value` placées dans un vhost Apache cessent de fonctionner.** Elles n'ont de sens que pour `mod_php`. Avec FPM, elles se déclarent dans le pool, entre crochets : `php_admin_value[memory_limit] = 256M`.
+
+> [!NOTE] Que retenir du choix
+> `mod_php` reste parfaitement valable pour un serveur qui n'héberge qu'un seul site et qu'on veut monter vite. Dès qu'il y a **plusieurs sites**, ou une exigence d'isolation, PHP-FPM est le standard : c'est le modèle utilisé par tous les hébergeurs, et le seul qui fonctionne aussi derrière nginx.
+>
+> Un `502 Bad Gateway` après la bascule signifie qu'Apache n'a pas pu joindre le socket FPM : vérifier que `php8.4-fpm` tourne, que le chemin du `SetHandler` correspond exactement au `listen` du pool, et que `listen.owner` vaut bien `www-data`.
+
+---
+
 ### Pour aller plus loin
 
-- **`mod_php` ou PHP-FPM ?** Ce chapitre utilise `mod_php`, le plus simple à mettre en œuvre : PHP est intégré à Apache et s'exécute sous `www-data`. En production on lui préfère **PHP-FPM**, où PHP tourne dans un processus séparé, avec son propre utilisateur et ses propres limites de ressources — ce qui permet d'isoler plusieurs sites sur une même machine. Voir [Apache avec PHP-FPM sur Debian](https://wiki.debian.org/PHP).
+- **Aller plus loin sur PHP-FPM** : le bonus de ce chapitre couvre la bascule et le pool par site. La [page PHP du wiki Debian](https://wiki.debian.org/PHP) détaille les variantes de configuration, et la [documentation officielle des pools FPM](https://www.php.net/manual/fr/install.fpm.configuration.php) donne toutes les directives `pm.*` pour dimensionner le nombre de processus selon la mémoire disponible.
 - **Certificats reconnus** : hors laboratoire, [Let's Encrypt](https://letsencrypt.org/fr/) délivre gratuitement des certificats reconnus par tous les navigateurs, renouvelés automatiquement par `certbot`. La condition est de posséder un domaine public réellement accessible — ce qui exclut `fournil.lab`.
 - **Durcir la configuration TLS** : le [générateur de configuration Mozilla SSL](https://ssl-config.mozilla.org/) produit les directives `SSLProtocol` / `SSLCipherSuite` à jour pour Apache, selon le niveau de compatibilité souhaité.
 - [Documentation Apache — Virtual Hosts](https://httpd.apache.org/docs/2.4/fr/vhosts/) : la référence officielle, en français.
