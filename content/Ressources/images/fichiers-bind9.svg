@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1255" role="img" aria-labelledby="title desc">
+  <title id="title">Les fichiers de configuration de BIND9 et leur rôle</title>
+  <desc id="desc">Le schéma sépare trois niveaux. D'abord la configuration : named.conf est un point d'entrée qui ne contient que des include vers named.conf.options pour le comportement du serveur, named.conf.local pour les zones hébergées et named.conf.default-zones fourni par Debian ; named-checkconf valide cet ensemble. Ensuite les données : les fichiers de zone db, placés dans etc bind pour une zone primaire statique, var cache bind pour les zones secondaires téléchargées et var lib bind pour les zones mises à jour dynamiquement ; named-checkzone valide un fichier de zone. Enfin un tableau de décision associant un besoin, le fichier à modifier, la vérification et la commande d'application.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef2ff"/>
+    </linearGradient>
+    <linearGradient id="entry" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#312e81"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowIndigo" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#6366f1"/>
+    </marker>
+    <marker id="arrowSky" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#0284c7"/>
+    </marker>
+    <style>
+      .title{font:800 30px system-ui,sans-serif;fill:#0f172a;letter-spacing:-.5px}
+      .subtitle{font:16px system-ui,sans-serif;fill:#475569}
+      .zoneTitle{font:800 22px system-ui,sans-serif;fill:#0f172a}
+      .path{font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#0f172a}
+      .file{font:600 15px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#1e293b}
+      .text{font:15px system-ui,sans-serif;fill:#334155}
+      .small{font:13px system-ui,sans-serif;fill:#64748b}
+      .badge{font:800 12px system-ui,sans-serif;letter-spacing:.7px}
+      .whiteTitle{font:800 23px system-ui,sans-serif;fill:#fff}
+      .whiteText{font:15px system-ui,sans-serif;fill:#e0e7ff}
+      .whiteSmall{font:13px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#c7d2fe}
+      .flow{stroke:#475569;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+      .incl{stroke:#6366f1;stroke-width:2.7;fill:none;marker-end:url(#arrowIndigo)}
+      .check{stroke:#0284c7;stroke-width:2.2;stroke-dasharray:8 6;fill:none;marker-end:url(#arrowSky)}
+      .th{font:800 14px system-ui,sans-serif;fill:#fff;letter-spacing:.4px}
+      .td{font:14px system-ui,sans-serif;fill:#334155}
+      .tdm{font:600 14px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#1e293b}
+    </style>
+  </defs>
+
+  <rect width="1400" height="1255" rx="26" fill="url(#bg)"/>
+  <text x="700" y="50" text-anchor="middle" class="title">BIND9 : quel fichier fait quoi ?</text>
+  <text x="700" y="80" text-anchor="middle" class="subtitle">Un fichier = une responsabilité. On ne modifie jamais named.conf : il ne fait qu'inclure les autres.</text>
+
+  <!-- ============ SECTION 1 : configuration ============ -->
+  <text x="55" y="128" class="zoneTitle">1 · La configuration — une chaîne d'inclusions</text>
+  <line x1="55" y1="140" x2="1345" y2="140" stroke="#cbd5e1" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="55" y="290" width="300" height="180" rx="22" fill="url(#entry)"/>
+    <circle cx="105" cy="342" r="22" fill="#818cf8"/>
+    <path d="M96 342h18M105 333v18" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <text x="140" y="333" class="whiteSmall">/etc/bind/</text>
+    <text x="140" y="360" class="whiteTitle">named.conf</text>
+    <text x="80" y="402" class="whiteText">Point d'entrée lu par named</text>
+    <text x="80" y="426" class="whiteText">Ne contient que des include</text>
+    <text x="80" y="452" class="whiteSmall">on n'y touche pas</text>
+  </g>
+
+  <path d="M355 340H398V237H440" class="incl"/>
+  <path d="M355 380H398V402H440" class="incl"/>
+  <path d="M355 420H398V547H620" class="incl"/>
+  <text x="410" y="503" class="small">include</text>
+
+  <g filter="url(#shadow)">
+    <rect x="440" y="165" width="470" height="145" rx="18" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+    <rect x="465" y="182" width="200" height="25" rx="12" fill="#2563eb"/>
+    <text x="565" y="200" text-anchor="middle" class="badge" fill="#fff">COMPORTEMENT SERVEUR</text>
+    <text x="465" y="240" class="path">named.conf.options</text>
+    <text x="465" y="268" class="file">forwarders · allow-query · listen-on</text>
+    <text x="465" y="292" class="text">« Comment je réponds quand je ne suis pas autoritaire »</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="440" y="330" width="470" height="145" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"/>
+    <rect x="465" y="347" width="150" height="25" rx="12" fill="#7c3aed"/>
+    <text x="540" y="365" text-anchor="middle" class="badge" fill="#fff">MES ZONES</text>
+    <text x="465" y="405" class="path">named.conf.local</text>
+    <text x="465" y="433" class="file">zone "fournil.lab" { type primary; file …; }</text>
+    <text x="465" y="457" class="text">Déclare les zones — sans contenir aucun enregistrement</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="620" y="495" width="290" height="115" rx="18" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+    <rect x="645" y="512" width="140" height="25" rx="12" fill="#64748b"/>
+    <text x="715" y="530" text-anchor="middle" class="badge" fill="#fff">FOURNI DEBIAN</text>
+    <text x="645" y="562" class="path">named.conf.default-zones</text>
+    <text x="645" y="583" class="small">localhost, 127.in-addr.arpa,</text>
+    <text x="645" y="601" class="small">indices racine — à laisser tel quel</text>
+  </g>
+
+  <path d="M910 237H928V380H940" class="check"/>
+  <path d="M910 402H940" class="check"/>
+  <path d="M910 547H928V380" stroke="#0284c7" stroke-width="2.2" stroke-dasharray="8 6" fill="none"/>
+  <g filter="url(#shadow)">
+    <rect x="940" y="290" width="405" height="180" rx="18" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="965" y="337" class="zoneTitle">named-checkconf</text>
+    <text x="965" y="372" class="text">Valide la syntaxe des fichiers named.conf*</text>
+    <text x="965" y="398" class="text">Aucune sortie affichée = tout est bon</text>
+    <text x="965" y="430" class="small">Ne vérifie PAS le contenu des fichiers de zone :</text>
+    <text x="965" y="451" class="small">c'est le rôle de named-checkzone, plus bas.</text>
+  </g>
+  <text x="1345" y="641" text-anchor="end" class="small">Aussi dans /etc/bind/ : rndc.key, bind.keys, zones.rfc1918 — fournis par le paquet, non modifiés.</text>
+
+  <!-- ============ SECTION 2 : données ============ -->
+  <text x="55" y="655" class="zoneTitle">2 · Les données — les fichiers de zone db.*</text>
+  <line x1="55" y1="667" x2="1345" y2="667" stroke="#cbd5e1" stroke-width="2"/>
+
+  <path d="M580 475V685H255V700" class="flow"/>
+  <text x="568" y="586" text-anchor="end" class="small">la directive file relie la déclaration au contenu</text>
+  <text x="568" y="608" text-anchor="end" class="file">file "/etc/bind/db.fournil.lab";</text>
+
+  <g filter="url(#shadow)">
+    <rect x="55" y="700" width="400" height="215" rx="20" fill="#ecfdf5" stroke="#059669" stroke-width="2.5"/>
+    <rect x="75" y="718" width="215" height="27" rx="13" fill="#059669"/>
+    <text x="182" y="737" text-anchor="middle" class="badge" fill="#fff">PRIMAIRE STATIQUE — LE TP</text>
+    <text x="82" y="782" class="path">/etc/bind/db.fournil.lab</text>
+    <text x="82" y="803" class="small">zone directe — A · CNAME · MX</text>
+    <text x="82" y="836" class="path">/etc/bind/db.192.168.56</text>
+    <text x="82" y="857" class="small">zone inverse — PTR</text>
+    <text x="82" y="884" class="text">Écrites à la main : c'est de la config.</text>
+    <text x="82" y="905" class="small">un Serial à incrémenter dans chacune</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="485" y="700" width="400" height="215" rx="20" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+    <rect x="505" y="718" width="155" height="27" rx="13" fill="#ea580c"/>
+    <text x="582" y="737" text-anchor="middle" class="badge" fill="#fff">SECONDAIRES</text>
+    <text x="512" y="787" class="path">/var/cache/bind/</text>
+    <text x="512" y="820" class="file">db.zone-recopiée</text>
+    <text x="512" y="847" class="text">Répertoire de travail de named :</text>
+    <text x="512" y="869" class="text">copies téléchargées depuis le maître.</text>
+    <text x="512" y="897" class="small">named sait les recréer seul — jamais éditées</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="915" y="700" width="430" height="215" rx="20" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.5"/>
+    <rect x="935" y="718" width="185" height="27" rx="13" fill="#7c3aed"/>
+    <text x="1027" y="737" text-anchor="middle" class="badge" fill="#fff">MISES À JOUR DDNS</text>
+    <text x="942" y="787" class="path">/var/lib/bind/</text>
+    <text x="942" y="820" class="file">db.zone · db.zone.jnl</text>
+    <text x="942" y="847" class="text">Zones que named modifie lui-même</text>
+    <text x="942" y="869" class="text">(nsupdate, DHCP) : il doit pouvoir écrire.</text>
+    <text x="942" y="897" class="small">.jnl = journal des modifications dynamiques</text>
+  </g>
+
+  <path d="M255 915V945H455" class="check"/>
+  <g filter="url(#shadow)">
+    <rect x="455" y="920" width="890" height="52" rx="26" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="482" y="953" class="file" font-size="16">named-checkzone fournil.lab /etc/bind/db.fournil.lab</text>
+    <text x="1325" y="952" text-anchor="end" class="small">valide UN fichier de zone · affiche le Serial lu</text>
+  </g>
+
+  <text x="55" y="1005" class="small">La directive directory "/var/cache/bind" ne fixe que la base des chemins relatifs : un chemin absolu comme /etc/bind/db.fournil.lab n'en dépend pas.</text>
+
+  <!-- ============ SECTION 3 : décision ============ -->
+  <text x="55" y="1048" class="zoneTitle">3 · Je veux faire quoi ? → quel fichier, quelle vérification</text>
+  <line x1="55" y1="1060" x2="1345" y2="1060" stroke="#cbd5e1" stroke-width="2"/>
+
+  <rect x="55" y="1078" width="1290" height="32" rx="8" fill="#334155"/>
+  <text x="75" y="1099" class="th">MON BESOIN</text>
+  <text x="430" y="1099" class="th">FICHIER À MODIFIER</text>
+  <text x="810" y="1099" class="th">VÉRIFIER AVEC</text>
+  <text x="1145" y="1099" class="th">APPLIQUER</text>
+
+  <rect x="55" y="1110" width="1290" height="33" fill="#ffffff"/>
+  <text x="75" y="1132" class="td">Faire suivre les domaines externes</text>
+  <text x="430" y="1132" class="tdm">named.conf.options</text>
+  <text x="810" y="1132" class="tdm">named-checkconf</text>
+  <text x="1145" y="1132" class="tdm">rndc reload</text>
+
+  <rect x="55" y="1143" width="1290" height="33" fill="#f1f5f9"/>
+  <text x="75" y="1165" class="td">Héberger un nouveau domaine</text>
+  <text x="430" y="1165" class="tdm">named.conf.local + db.&lt;zone&gt;</text>
+  <text x="810" y="1165" class="tdm">checkconf puis checkzone</text>
+  <text x="1145" y="1165" class="tdm">rndc reload</text>
+
+  <rect x="55" y="1176" width="1290" height="33" fill="#ffffff"/>
+  <text x="75" y="1198" class="td">Ajouter ou déplacer une machine</text>
+  <text x="430" y="1198" class="tdm">db.directe ET db.inverse + les 2 Serial</text>
+  <text x="810" y="1198" class="tdm">named-checkzone</text>
+  <text x="1145" y="1198" class="tdm">rndc reload</text>
+
+  <rect x="55" y="1209" width="1290" height="35" fill="#fef2f2"/>
+  <rect x="55" y="1209" width="6" height="35" fill="#dc2626"/>
+  <text x="75" y="1232" class="td" fill="#991b1b">Changer le DNS que MA machine interroge</text>
+  <text x="430" y="1232" class="tdm" fill="#991b1b">/etc/resolv.conf — côté client</text>
+  <text x="810" y="1232" class="td" fill="#991b1b">ce fichier ne configure pas BIND</text>
+  <text x="1145" y="1232" class="tdm" fill="#991b1b">dig @IP pour trancher</text>
+</svg>

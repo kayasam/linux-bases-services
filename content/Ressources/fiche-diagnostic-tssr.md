@@ -7,7 +7,7 @@
 
 ## 1. Reformuler le symptôme
 
-Écrire une phrase testable : « depuis le client `192.168.56.10`, le nom `www.founil.lab` se résout mais la connexion TCP au port 80 échoue ». Éviter « Internet ne marche pas », trop vague pour orienter une recherche.
+Écrire une phrase testable : « depuis le client `192.168.56.10`, le nom `www.fournil.lab` se résout mais la connexion TCP au port 80 échoue ». Éviter « Internet ne marche pas », trop vague pour orienter une recherche.
 
 ## 2. Vérifier du bas vers le haut
 
