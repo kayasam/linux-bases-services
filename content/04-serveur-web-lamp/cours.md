@@ -134,6 +134,9 @@ curl -v http://192.168.56.200/ -H 'Host: www.fournil.lab'  # forcer l'en-tête H
 >
 > Conséquence pratique : ne **pas** désactiver `000-default.conf` pendant ce chapitre. Le garder actif permet d'observer la différence entre un test par IP (site par défaut) et un test par nom (votre site) — c'est la démonstration du mécanisme. Un test par IP qui affiche « It works! » ne prouve donc rien contre votre vhost.
 
+> [!NOTE] Si la page par défaut persiste malgré un `a2dissite`
+> Le symptôme est classique et a cinq causes possibles — dont une qui surprend : lorsque **plus aucun** vhost n'est actif, Apache ne s'arrête pas de répondre, il retombe sur son `DocumentRoot` global et sert donc… la page par défaut. Le détail du diagnostic, ainsi qu'une démonstration pas à pas de la création d'un second vhost, se trouvent dans `Annexe - Site par defaut et vhosts.md`. Cette annexe traite aussi l'avertissement `AH00558` au démarrage.
+
 ---
 
 ### Tester PHP et la base de données
