@@ -4,8 +4,6 @@
 >
 > - <a href="https://kayasam.github.io/linux-bases-services/telechargements/04-serveur-web-lamp/tp/04-glpi.md" download>Télécharger ce TP en Markdown</a>
 
-> Chapitre associé : `Cours.md` — fait suite au `TP.md`, sur le **même serveur**
->
 > Durée estimée : 2 h
 >
 > Prérequis : la pile LAMP du TP 4 fonctionne, et le serveur DNS du chapitre 3 est opérationnel.
@@ -37,10 +35,10 @@ Le travail est terminé quand les huit points suivants sont satisfaits.
 2. Le nom `glpi.fournil.lab` est résolu par **votre serveur DNS** du chapitre 3 — pas par le fichier `hosts` du poste
 3. GLPI dispose de son **propre virtual host**, avec ses propres journaux d'accès et d'erreurs. Le site `fournil-web` du TP 4 continue de fonctionner sans modification
 4. GLPI dispose de sa **propre base de données** et de son **propre utilisateur MariaDB**, distincts de ceux du TP 4, et dont les droits ne portent que sur cette base
-5. La connexion est chiffrée, avec un certificat **couvrant le nom `glpi.fournil.lab`**
-6. La page de vérification de l'assistant d'installation ne présente **aucun point rouge**
-7. Les mesures de sécurité **recommandées par la documentation** après l'installation ont été appliquées
-8. Les tâches automatiques de GLPI sont déclenchées par le système, et non par les visites des utilisateurs
+5. (bonus) La connexion est chiffrée, avec un certificat **couvrant le nom `glpi.fournil.lab`**
+6. (bonus) La page de vérification de l'assistant d'installation ne présente **aucun point rouge**
+7. (bonus) Les mesures de sécurité **recommandées par la documentation** après l'installation ont été appliquées
+8. (bonus) Les tâches automatiques de GLPI sont déclenchées par le système, et non par les visites des utilisateurs
 
 ## Livrables
 
@@ -63,12 +61,3 @@ On ne vous donnera pas la réponse, mais la méthode du chapitre reste valable. 
 
 > [!TIP] Le réflexe qui fait gagner le plus de temps
 > Gardez en permanence un second terminal ouvert sur le journal d'erreurs de votre virtual host GLPI. La quasi-totalité des échecs de ce TP y sont expliqués en une ligne.
-
-## Pour aller plus loin
-
-Si tout fonctionne avant la fin du temps imparti :
-
-- créez un compte utilisateur non-administrateur et vérifiez ce qu'il voit ;
-- déclarez votre propre poste comme un actif de l'inventaire ;
-- ouvrez un ticket depuis le compte utilisateur et traitez-le depuis le compte technicien ;
-- identifiez, dans la configuration que vous venez de produire, ce qui resterait à durcir avant une mise en production réelle.
