@@ -121,6 +121,7 @@ $courseMappings = @(
   @{ Source = "3 - Service DNS (BIND9)\Correction.md"; Destination = "03-dns-bind9\tp\03-dns-correction.md" },
   @{ Source = "4 - Service Web - pile LAMP\Cours.md"; Destination = "04-serveur-web-lamp\cours.md" },
   @{ Source = "4 - Service Web - pile LAMP\TP.md"; Destination = "04-serveur-web-lamp\tp\04-lamp.md" },
+  @{ Source = "4 - Service Web - pile LAMP\TP-bis.md"; Destination = "04-serveur-web-lamp\tp\04-glpi.md" },
   @{ Source = "4 - Service Web - pile LAMP\Correction.md"; Destination = "04-serveur-web-lamp\tp\04-lamp-correction.md" },
   @{ Source = "5 - Pare-feu nftables\Cours.md"; Destination = "05-pare-feu-nftables\cours.md" },
   @{ Source = "5 - Pare-feu nftables\TP.md"; Destination = "05-pare-feu-nftables\tp\05-nftables.md" },
