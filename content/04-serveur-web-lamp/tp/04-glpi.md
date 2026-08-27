@@ -24,6 +24,7 @@ Vous êtes l'administrateur système. Le serveur web est déjà en place — c'e
 ## La ressource
 
 **Documentation officielle d'installation de GLPI** → <https://glpi-install.readthedocs.io/>
+vous pouvez aussi suivre la documentation : [Comment installer GLPI 11 sur Debian 13 ?](https://www.it-connect.fr/installation-pas-a-pas-de-glpi-10-sur-debian-12/)
 
 Deux pages vous suffiront : les **prérequis** et l'**installation**. Lisez-les _entièrement_ avant de taper la première commande — plusieurs contraintes de ce TP y sont expliquées, et les découvrir en cours de route vous fera tout recommencer.
 
