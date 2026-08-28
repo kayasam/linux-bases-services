@@ -8,6 +8,17 @@
 >
 > Durée estimée : 1 h 30 — console locale et seconde session SSH obligatoires
 
+> [!WARNING] À faire **avant** l'étape 4
+> Avant de charger un jeu de règles en `policy drop`, armez votre filet de sécurité :
+>
+> ```bash
+> sudo systemd-run --on-active=300 /usr/sbin/nft flush ruleset
+> ```
+>
+> Notez le nom d'unité affiché (`run-rXXXX.timer`). Si vous vous coupez l'accès, la machine videra ses règles toute seule au bout de 5 minutes. Une fois l'accès vérifié par une **nouvelle** connexion SSH, désarmez avec `sudo systemctl stop run-rXXXX.timer`.
+>
+> Rappel : `nft` exige `sudo`, **y compris pour lire** le jeu de règles.
+
 _**Consigne**_ :
 
 1. Installer `nftables` et l'activer au démarrage
